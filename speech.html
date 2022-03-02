@@ -388,13 +388,15 @@
                                     msg.emotes = userstate.emotes;
                                 msg.action =
                                     userstate["message-type"] == "action";
-                                console.log(userstate["badges-raw"]);
-                                msg.streamer =
-                                    userstate["badges-raw"] !== null
-                                        ? userstate["badges-raw"].indexOf(
-                                              "broadcaster/1"
-                                          )
-                                        : "";
+
+                                try {
+                                    msg.streamer =
+                                        userstate["badges-raw"].indexOf(
+                                            "broadcaster/1"
+                                        ) !== -1;
+                                } catch {
+                                    console.log(userstate["badges-raw"]);
+                                }
                                 msg.mod = userstate.mod;
                                 msg.sub = userstate.subscriber;
                                 msg.turbo = userstate.turbo;
