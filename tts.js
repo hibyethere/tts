@@ -90,7 +90,7 @@ function displayResultFromChat(result, msg, usecoloredchat = true) {
 }
 
 /**
- * 시청자 TTS 랜덤 변경
+ * 시청자 TTS 보이스 랜덤 변경
  * @param {String} username 시청자 이름
  * @param {Function} callback 실행 결과 콜백
  */
@@ -110,6 +110,21 @@ function randomVoice(username, callback) {
                 randomPitch.toFixed(1) +
                 "로 전환되었습니다."
         );
+    } else {
+        callback(false, "시청자 이름은 비어 있을수 없습니다.");
+    }
+}
+
+/**
+ * 시청자 TTS 보이스 초기화
+ * @param {String} username 시청자 이름
+ * @param {Function} callback 실행 결과 콜백
+ */
+function initializeVoice(username, callback) {
+    if (username != "") {
+        localStorage.setItem(username + ":speed", "none");
+        localStorage.setItem(username + ":pitch", "none");
+        callback(true, "시청자 " + username + " 의 성대가 초기화 되었습니다.");
     } else {
         callback(false, "시청자 이름은 비어 있을수 없습니다.");
     }
@@ -502,6 +517,11 @@ function parseCmd(e) {
         if (command.indexOf("random ") !== -1) {
             command = command.replace("random ", "");
             randomVoice(command, displayResultFromChat);
+        }
+
+        if (command.indexOf("init ") !== -1) {
+            command = command.replace("init ", "");
+            initializeVoice(command, displayResultFromChat);
         }
 
         if (command.indexOf("clearban") !== -1) {
