@@ -1,290 +1,489 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
-<head>
-    <title>채팅 읽어주는 로봇</title>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="./notifications.css?v=20210911" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.840.0/aws-sdk.min.js" integrity="sha512-l299oP0ZZwuId6dh4uB/u5N4ZiMb1TSghnBfPLbRH8SDf4Z9Do73JY9FRbTW656STTe3gPDkV7jiUmsD++D4iA==" crossorigin="anonymous"></script>
-    <script src="https://rawcdn.githack.com/blueimp/JavaScript-MD5/v2.10.0/js/md5.min.js"></script>
-    <script src="./ChattyKathy.js?v=20210911"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js" integrity="sha512-wV7Yj1alIZDqZFCUQJy85VN+qvEIly93fIQAN7iqDFCPEucLCeNFz4r35FCo9s6WrpdDQPi80xbljXB8Bjtvcg==" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js" integrity="sha512-RdSPYh1WA6BF0RhpisYJVYkOyTzK4HwofJ3Q7ivt/jkpW6Vc8AurL1R+4AUcvn9IwEKAPm/fk7qFZW3OuiUDeg==" crossorigin="anonymous"></script>
-    <script src="./tmi.min.js?v=20220302-renewal2"></script>
-    <script src="./notifications.js?v=20210911"></script>
-    <script src="./tts.js?v=20210911"></script>
-</head>
-<body>
-    <div id="divClick" style="display: block">활성화를 위해 마우스 클릭이 필요합니다.</div>
-    <div id="divContent" style="display: none;">
-        <div id="chat" style="overflow: hidden; word-wrap: break-word; width: 800px;">
-            <button type="button" class="btn btn-danger" disabled="disabled" id="btn-cancel" onclick="window.speechQueue = [];window.kathy.ShutUp();window.speechSynthesis.cancel();playText('큐를 비웠습니다',1.3,1,false,'SYSTEM')">초기화중</button>
-            <button type="button" class="btn btn-secondary" onclick="document.getElementById('last_read').innerHTML = '';" id="btn-clearlog">로그 비움</button>
-            <button type="button" class="btn btn-warning" onclick="localStorage.setItem('oauth','');location.reload();" id="btn-logout">로그아웃</button>
-            <button type="button" class="btn btn-success" onclick="window.change_channel();" id="btn-channel">채널 변경</button><br />
-            <input type="checkbox" id="chk-autoscroll" onclick="localStorage.setItem('autoscroll', this.checked ? 'true' : 'false');window.stopScroll = !this.checked;if(!window.stopScroll) scrollBottom();" /> 자동 스크롤 켜기<br /><br />
-            <h5>활성화된 언어</h5>
-            <input type="checkbox" id="chk-enable-kor" onclick="setLanguage('kor', this.checked)" /> 한국어(우선순위 : <span id="ord-kor">비활성화</span>)
-            <input type="checkbox" id="chk-enable-jpn" onclick="setLanguage('jpn', this.checked)" /> 일본어(우선순위 : <span id="ord-jpn">비활성화</span>)
-            <input type="checkbox" id="chk-enable-chn" onclick="setLanguage('chn', this.checked)" /> 중국어(우선순위 : <span id="ord-chn">비활성화</span>)<br />
-            <div id="last_read" style="width:100%; height: 200px; overflow-y: scroll;"></div>
+    <head>
+        <title>채팅 읽어주는 로봇</title>
+        <meta charset="utf-8" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css"
+            integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA=="
+            crossorigin="anonymous"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css"
+        />
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+            integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+            crossorigin="anonymous"
+        ></script>
+        <link rel="stylesheet" href="./notifications.css?v=20210911" />
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.840.0/aws-sdk.min.js"
+            integrity="sha512-l299oP0ZZwuId6dh4uB/u5N4ZiMb1TSghnBfPLbRH8SDf4Z9Do73JY9FRbTW656STTe3gPDkV7jiUmsD++D4iA=="
+            crossorigin="anonymous"
+        ></script>
+        <script src="https://rawcdn.githack.com/blueimp/JavaScript-MD5/v2.10.0/js/md5.min.js"></script>
+        <script src="./ChattyKathy.js?v=20210911"></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"
+            integrity="sha512-wV7Yj1alIZDqZFCUQJy85VN+qvEIly93fIQAN7iqDFCPEucLCeNFz4r35FCo9s6WrpdDQPi80xbljXB8Bjtvcg=="
+            crossorigin="anonymous"
+        ></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"
+            integrity="sha512-RdSPYh1WA6BF0RhpisYJVYkOyTzK4HwofJ3Q7ivt/jkpW6Vc8AurL1R+4AUcvn9IwEKAPm/fk7qFZW3OuiUDeg=="
+            crossorigin="anonymous"
+        ></script>
+        <script src="./tmi.min.js?v=20220302-renewal2"></script>
+        <script src="./notifications.js?v=20210911"></script>
+        <script src="./tts.js?v=20210911"></script>
+    </head>
+    <body>
+        <div id="divClick" style="display: block">
+            활성화를 위해 마우스 클릭이 필요합니다.
         </div>
-        <form style="margin:10px">
-            <div class="form-group">
-                <label for="polly_access_id">아마존 액세스 아이디</label>
-                <input type="text" class="form-control" id="polly_access_id" placeholder="Amazon Access ID">
+        <div id="divContent" style="display: none">
+            <div
+                id="chat"
+                style="overflow: hidden; word-wrap: break-word; width: 800px"
+            >
+                <button
+                    type="button"
+                    class="btn btn-danger"
+                    disabled="disabled"
+                    id="btn-cancel"
+                    onclick="window.speechQueue = [];window.kathy.ShutUp();window.speechSynthesis.cancel();playText('큐를 비웠습니다',1.3,1,false,'SYSTEM')"
+                >
+                    초기화중
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="document.getElementById('last_read').innerHTML = '';"
+                    id="btn-clearlog"
+                >
+                    로그 비움
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-warning"
+                    onclick="localStorage.setItem('oauth','');location.reload();"
+                    id="btn-logout"
+                >
+                    로그아웃
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-success"
+                    onclick="window.change_channel();"
+                    id="btn-channel"
+                >
+                    채널 변경</button
+                ><br />
+                <input
+                    type="checkbox"
+                    id="chk-autoscroll"
+                    onclick="localStorage.setItem('autoscroll', this.checked ? 'true' : 'false');window.stopScroll = !this.checked;if(!window.stopScroll) scrollBottom();"
+                />
+                자동 스크롤 켜기<br /><br />
+                <h5>활성화된 언어</h5>
+                <input
+                    type="checkbox"
+                    id="chk-enable-kor"
+                    onclick="setLanguage('kor', this.checked)"
+                />
+                한국어(우선순위 : <span id="ord-kor">비활성화</span>)
+                <input
+                    type="checkbox"
+                    id="chk-enable-jpn"
+                    onclick="setLanguage('jpn', this.checked)"
+                />
+                일본어(우선순위 : <span id="ord-jpn">비활성화</span>)
+                <input
+                    type="checkbox"
+                    id="chk-enable-chn"
+                    onclick="setLanguage('chn', this.checked)"
+                />
+                중국어(우선순위 : <span id="ord-chn">비활성화</span>)<br />
+                <div
+                    id="last_read"
+                    style="width: 100%; height: 200px; overflow-y: scroll"
+                ></div>
             </div>
-            <div class="form-group">
-                <label for="polly_access_key">아마존 액세스 키</label>
-                <input type="text" class="form-control" id="polly_access_key" placeholder="Amazon Access Key">
-            </div>
-            <div class="form-group row">
-                <div class="offset-sm-2 col-sm-10">
-                    <button type="button" class="btn btn-primary" onclick="localStorage.setItem('polly_access_id', document.getElementById('polly_access_id').value);localStorage.setItem('polly_access_key', document.getElementById('polly_access_key').value);location.reload()">
-                        정보 저장
-                    </button>
+            <form style="margin: 10px">
+                <div class="form-group">
+                    <label for="polly_access_id">아마존 액세스 아이디</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="polly_access_id"
+                        placeholder="Amazon Access ID"
+                    />
                 </div>
-            </div>
-        </form>
-    </div>
-    <script>
-        // 트위치 개발자 사이트에서 앱 등록으로 client id를 발급받으실수 있습니다.
-        window.oauth_client_id = "bz5whp3i3ihi98e6e1jx3jkxnksyk1";
+                <div class="form-group">
+                    <label for="polly_access_key">아마존 액세스 키</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="polly_access_key"
+                        placeholder="Amazon Access Key"
+                    />
+                </div>
+                <div class="form-group row">
+                    <div class="offset-sm-2 col-sm-10">
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            onclick="localStorage.setItem('polly_access_id', document.getElementById('polly_access_id').value);localStorage.setItem('polly_access_key', document.getElementById('polly_access_key').value);location.reload()"
+                        >
+                            정보 저장
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <script>
+            // 트위치 개발자 사이트에서 앱 등록으로 client id를 발급받으실수 있습니다.
+            window.oauth_client_id = "de2bzbzl087773tkdaircscxfqfyx3";
 
-        // 인증후 돌아올 페이지(현재 페이지 주소)를 입력합니다.
-        window.oauth_redirect_uri = "https://lastorder.xyz/chatreader-kor/speech.html";
-        
-        // ==================================
-        // !! 이 아래로는 수정하지 마세요! !!
-        // ==================================
-        const url_string = window.location.href;
-        const url = new URL(url_string);
-        
-        let client = null;
+            // 인증후 돌아올 페이지(현재 페이지 주소)를 입력합니다.
+            window.oauth_redirect_uri =
+                "https://hibyethere.github.io/tts/speech.html";
 
-        if ('speechSynthesis' in window) {
-            console.debug("TTS check done");
-        } else {
-            location.href = "./no_tts.html";
-        }
+            // ==================================
+            // !! 이 아래로는 수정하지 마세요! !!
+            // ==================================
+            const url_string = window.location.href;
+            const url = new URL(url_string);
 
-        // 주소뒤 ?channel=(채널아이디) 로 지정
-        window.channelname = getParams("channel");
-        
-        // 채널명 없으면 비워둠
-        if (window.channelname === null) window.channelname = "";
-        
-        // 클릭 여부 저장
-        window.isclicked = false;
-        
-        // 자동스크롤 중단 여부
-        window.stopScroll = localStorage.getItem("autoscroll") === "false";
-        if(!window.stopScroll) {
-            document.getElementById("chk-autoscroll").checked = true;
-            scrollBottom();
-        }
+            let client = null;
 
-        // oauth token으로 처음 페이지 접속시 트위치 로그인으로 생성함(로컬스토리지 저장, 로그아웃시 초기화됨)
-        window.oauth = localStorage.getItem("oauth") !== null ? localStorage.getItem("oauth") : "";
-        window.login = localStorage.getItem("login") !== null && localStorage.getItem("login") !== "undefined" ? localStorage.getItem("login") : "";
-        window.display_name = localStorage.getItem("display_name") !== null && localStorage.getItem("display_name") !== "undefined" ? localStorage.getItem("display_name") : "";
-        window.last_login_date = localStorage.getItem("last_login_date") !== null && localStorage.getItem("last_login_date") !== "undefined" ? parseInt(localStorage.getItem("last_login_date")) : -1;
-
-        // 주소뒤 ?debug=true 로 디버그모드 활성화
-        window.debugmode = getParams("debug") === "true";
-
-        // 읽을 채팅 최대 길이(!!tts maxlength (길이)로 변경가능)
-        window.maxlength = localStorage.getItem("tts_maxlength") !== null ? parseInt(localStorage.getItem("tts_maxlength")) : 40;
-
-        // 읽을 채팅 음량 (!!tts volume (음량)으로 변경가능)
-        window.volume = localStorage.getItem("tts_volume") !== null ? parseInt(localStorage.getItem("tts_volume")) : 100;
-
-        // 차단 목록(로컬스토리지 저장, !!tts ban (아이디) 로 밴하고 !!tts unban (아이디)로 밴 해제)
-        window.banlist = localStorage.getItem("tts_banlist_" + window.channelname) !== null ? localStorage.getItem("tts_banlist_" + window.channelname).split("|") : [];
-        
-        // 허용 목록(로컬스토리지 저장, !!tts addlist (아이디) 로 추가하고 !!tts removelist (아이디)로 삭제)
-        window.whitelist = (localStorage.getItem("tts_whitelist_" + window.channelname) !== null && localStorage.getItem("tts_whitelist_" + window.channelname) !== "") ? localStorage.getItem("tts_whitelist_" + window.channelname).split("|") : [];
-
-        // 밴키워드(로컬스토리지 저장, !!tts ban (아이디) 로 밴하고 !!tts unban (아이디)로 밴 해제)
-        window.bankeyword = localStorage.getItem("tts_bankeyword_" + window.channelname) !== null ? localStorage.getItem("tts_bankeyword_" + window.channelname).split("|") : [];
-
-        // 기본적으로 밴할 리스트
-        window.banlist = window.banlist.concat(['Nightbot', '싹둑']);
-
-        // 기본적으로 밴할 키워드
-        window.bankeyword = window.bankeyword.concat(['섹스']);
-        
-        // 언어 순서 설정
-        window.languagelist = localStorage.getItem("languagelist") !== null ? JSON.parse(localStorage.getItem("languagelist")) : ["kor","jpn"];
-        window.curOrd = 1;
-        for(idx in window.languagelist) {
-            document.getElementById("chk-enable-" + window.languagelist[idx]).checked = true;
-            document.getElementById("ord-" + window.languagelist[idx]).innerText = window.curOrd++;
-        }
-        
-        // 각 리스트 모두 중복 제거
-        if(window.banlist.length != 0) {
-            window.banlist = window.banlist.filter(function(item, pos) {
-                return window.banlist.indexOf(item) == pos;
-            });
-        }
-        if(window.whitelist.length != 0) {
-            window.whitelist = window.whitelist.filter(function(item, pos) {
-                return window.whitelist.indexOf(item) == pos;
-            });
-        }
-        if(window.bankeyword.length != 0) {
-            window.bankeyword = window.bankeyword.filter(function(item, pos) {
-                return window.bankeyword.indexOf(item) == pos;
-            });
-        }
-
-        // 구독자 전용
-        window.tts_subonly = localStorage.getItem("tts_subonly") === "true";
-
-        // 개설자 전용
-        window.tts_founderonly = localStorage.getItem("tts_founderonly") === "true";
-
-        // 보이스 개인화 설정
-        window.uniq_voice = localStorage.getItem("uniq_voice") !== "false";
-
-        // 기본 보이스
-        window.def_voice = localStorage.getItem("def_voice") !== null ? localStorage.getItem("def_voice") : "default";
-
-        // 초기화 성공 여부
-        window.initok = false;
-
-        window.mod_speed = 1;
-        window.nonmod_speed = 1.2;
-
-        speechSynthesis.cancel();
-
-        document.getElementById('polly_access_id').value = localStorage.getItem("polly_access_id");
-        document.getElementById('polly_access_key').value = localStorage.getItem("polly_access_key");
-        const awsCredentials = new AWS.Credentials(localStorage.getItem("polly_access_id"), localStorage.getItem("polly_access_key"));
-        const settings = {
-            awsCredentials: awsCredentials,
-            awsRegion: "us-west-2",
-            pollyVoiceId: "Seoyeon",
-            cacheSpeech: true
-        };
-
-        window.kathy = new ChattyKathy(settings);
-        window.users = [];
-        window.speechQueue = [];
-        
-        // tokens before 21/10/7 00:00(GMT+9) are invalid due to twitch hacking
-        if (window.oauth !== "" && window.login !== "" && window.last_login_date > 1633532400) {
-            $(document).on('click', function() {
-                if(window.isclicked) return;
-                window.isclicked = true;
-                document.getElementById("divClick").style.display = "none";
-                document.getElementById("divContent").style.display = "block";
-                
-                if (window.channelname === "") {
-                    location.href = url.origin + url.pathname + "?channel=" + window.login;
-                } else {
-                    client = new tmi.Client({
-                    options: { debug: true, messagesLogLevel: "info", clientId: window.oauth_client_id },
-                    connection: {
-                        reconnect: true,
-                        secure: true
-                    },
-                    identity: {
-                        username: window.login,
-                        password: window.oauth
-                    },
-                    channels: [ window.channelname ]});
-                    
-                    client.on("connected", (address, port) => {
-                        checkTTS();
-                    });
-                    
-                    client.on("message", function(channel, userstate, message, self) {
-                        if (self) return;
-
-                        let msg = {}
-                        msg.from = userstate["display-name"];
-                        msg.text = message;
-                        msg.color = userstate.color;
-                        if(userstate.emotes !== null) msg.emotes = userstate.emotes;
-                        msg.action = userstate["message-type"] == "action";
-                        msg.streamer = userstate["badges-raw"].indexOf("broadcaster/1") !== -1;
-                        msg.mod = userstate.mod;
-                        msg.sub = userstate.subscriber;
-                        msg.turbo = userstate.turbo;
-                        msg.badges = userstate["badges-raw"];
-                        msg.room_id = userstate["room-id"];
-                        msg.user_id = userstate["user-id"];
-
-                        parseMessage(msg);
-                    });
-                    
-                    client.connect().catch(console.error);
-                }
-            });
-        } else {
-            // there's no oauth key
-            if (document.location.hash !== "" && document.location.hash.indexOf("access_token") !== -1) {
-                //user already authed
-                const rawauth = document.location.href.replace("#", "?");
-                const authobj = new URL(rawauth);
-                const oauth = getParams("access_token", rawauth);
-                const state = getParams("state", rawauth);
-                const localstate = localStorage.getItem("state");
-                const last_url = localStorage.getItem("last_url");
-                const last_url_obj = new URL(last_url);
-
-                document.body.innerHTML = '';
-
-                if (last_url_obj.origin !== authobj.origin) {
-                    document.write("SECURITY ERROR");
-                } else {
-                    if (localstate === null || localstate === "" || state !== localstate) {
-                        document.write("잘못된 state값이 전달되었습니다. 페이지를 새로고침 해보세요.<br />Invalid state. please refresh and retry.")
-                    } else {
-                        localStorage.setItem("oauth", oauth);
-                        localStorage.setItem("state", "");
-                        localStorage.setItem("last_url", "");
-                        fetch(
-                            'https://api.twitch.tv/helix/users',
-                            {
-                                "headers": {
-                                    "Client-ID": window.oauth_client_id,
-                                    "Authorization": "Bearer " + oauth
-                                }
-                            }
-                        )
-                        .then(function(response) {
-                            return response.json();
-                        })
-                        .then(function(result) {
-                            localStorage.setItem("login", result.data[0].login);
-                            localStorage.setItem("display_name", result.data[0].display_name);
-                            localStorage.setItem("last_login_date", Math.floor(new Date().getTime() / 1000));
-                            
-                            location.href = last_url;
-                        });
-                    }
-                }
+            if ("speechSynthesis" in window) {
+                console.debug("TTS check done");
             } else {
-                //not authed yet
-                const state = md5(Date.now());
-                localStorage.setItem("state", state);
-                localStorage.setItem("last_url", location.href);
-                
-                document.body.innerHTML = '';
-                document.write("트위치로 로그인해야 사용하실수 있습니다.<br />2021년 10월 7일 이전에 로그인하셨다면 트위치 해킹으로 인해 키가 유출되었을 가능성이 있어 재로그인하셔야 합니다.<br /><br /> <a href=\"https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=" +
-                        window.oauth_client_id +
-                        "&redirect_uri=" +
-                        window.oauth_redirect_uri +
-                        "&scope=bits:read%20channel:read:hype_train%20channel:read:redemptions%20channel:read:subscriptions%20chat:read%20chat:edit&state=" +
-                        state +
-                        "\">트위치 아이디로 로그인</a>");
+                location.href = "./no_tts.html";
             }
-        }
-    </script>
-</body>
+
+            // 주소뒤 ?channel=(채널아이디) 로 지정
+            window.channelname = getParams("channel");
+
+            // 채널명 없으면 비워둠
+            if (window.channelname === null) window.channelname = "";
+
+            // 클릭 여부 저장
+            window.isclicked = false;
+
+            // 자동스크롤 중단 여부
+            window.stopScroll = localStorage.getItem("autoscroll") === "false";
+            if (!window.stopScroll) {
+                document.getElementById("chk-autoscroll").checked = true;
+                scrollBottom();
+            }
+
+            // oauth token으로 처음 페이지 접속시 트위치 로그인으로 생성함(로컬스토리지 저장, 로그아웃시 초기화됨)
+            window.oauth =
+                localStorage.getItem("oauth") !== null
+                    ? localStorage.getItem("oauth")
+                    : "";
+            window.login =
+                localStorage.getItem("login") !== null &&
+                localStorage.getItem("login") !== "undefined"
+                    ? localStorage.getItem("login")
+                    : "";
+            window.display_name =
+                localStorage.getItem("display_name") !== null &&
+                localStorage.getItem("display_name") !== "undefined"
+                    ? localStorage.getItem("display_name")
+                    : "";
+            window.last_login_date =
+                localStorage.getItem("last_login_date") !== null &&
+                localStorage.getItem("last_login_date") !== "undefined"
+                    ? parseInt(localStorage.getItem("last_login_date"))
+                    : -1;
+
+            // 주소뒤 ?debug=true 로 디버그모드 활성화
+            window.debugmode = getParams("debug") === "true";
+
+            // 읽을 채팅 최대 길이(!!tts maxlength (길이)로 변경가능)
+            window.maxlength =
+                localStorage.getItem("tts_maxlength") !== null
+                    ? parseInt(localStorage.getItem("tts_maxlength"))
+                    : 40;
+
+            // 읽을 채팅 음량 (!!tts volume (음량)으로 변경가능)
+            window.volume =
+                localStorage.getItem("tts_volume") !== null
+                    ? parseInt(localStorage.getItem("tts_volume"))
+                    : 100;
+
+            // 차단 목록(로컬스토리지 저장, !!tts ban (아이디) 로 밴하고 !!tts unban (아이디)로 밴 해제)
+            window.banlist =
+                localStorage.getItem("tts_banlist_" + window.channelname) !==
+                null
+                    ? localStorage
+                          .getItem("tts_banlist_" + window.channelname)
+                          .split("|")
+                    : [];
+
+            // 허용 목록(로컬스토리지 저장, !!tts addlist (아이디) 로 추가하고 !!tts removelist (아이디)로 삭제)
+            window.whitelist =
+                localStorage.getItem("tts_whitelist_" + window.channelname) !==
+                    null &&
+                localStorage.getItem("tts_whitelist_" + window.channelname) !==
+                    ""
+                    ? localStorage
+                          .getItem("tts_whitelist_" + window.channelname)
+                          .split("|")
+                    : [];
+
+            // 밴키워드(로컬스토리지 저장, !!tts ban (아이디) 로 밴하고 !!tts unban (아이디)로 밴 해제)
+            window.bankeyword =
+                localStorage.getItem("tts_bankeyword_" + window.channelname) !==
+                null
+                    ? localStorage
+                          .getItem("tts_bankeyword_" + window.channelname)
+                          .split("|")
+                    : [];
+
+            // 기본적으로 밴할 리스트
+            window.banlist = window.banlist.concat(["Nightbot", "싹둑"]);
+
+            // 기본적으로 밴할 키워드
+            window.bankeyword = window.bankeyword.concat(["섹스"]);
+
+            // 언어 순서 설정
+            window.languagelist =
+                localStorage.getItem("languagelist") !== null
+                    ? JSON.parse(localStorage.getItem("languagelist"))
+                    : ["kor", "jpn"];
+            window.curOrd = 1;
+            for (idx in window.languagelist) {
+                document.getElementById(
+                    "chk-enable-" + window.languagelist[idx]
+                ).checked = true;
+                document.getElementById(
+                    "ord-" + window.languagelist[idx]
+                ).innerText = window.curOrd++;
+            }
+
+            // 각 리스트 모두 중복 제거
+            if (window.banlist.length != 0) {
+                window.banlist = window.banlist.filter(function (item, pos) {
+                    return window.banlist.indexOf(item) == pos;
+                });
+            }
+            if (window.whitelist.length != 0) {
+                window.whitelist = window.whitelist.filter(function (
+                    item,
+                    pos
+                ) {
+                    return window.whitelist.indexOf(item) == pos;
+                });
+            }
+            if (window.bankeyword.length != 0) {
+                window.bankeyword = window.bankeyword.filter(function (
+                    item,
+                    pos
+                ) {
+                    return window.bankeyword.indexOf(item) == pos;
+                });
+            }
+
+            // 구독자 전용
+            window.tts_subonly = localStorage.getItem("tts_subonly") === "true";
+
+            // 개설자 전용
+            window.tts_founderonly =
+                localStorage.getItem("tts_founderonly") === "true";
+
+            // 보이스 개인화 설정
+            window.uniq_voice = localStorage.getItem("uniq_voice") !== "false";
+
+            // 기본 보이스
+            window.def_voice =
+                localStorage.getItem("def_voice") !== null
+                    ? localStorage.getItem("def_voice")
+                    : "default";
+
+            // 초기화 성공 여부
+            window.initok = false;
+
+            window.mod_speed = 1;
+            window.nonmod_speed = 1.2;
+
+            speechSynthesis.cancel();
+
+            document.getElementById("polly_access_id").value =
+                localStorage.getItem("polly_access_id");
+            document.getElementById("polly_access_key").value =
+                localStorage.getItem("polly_access_key");
+            const awsCredentials = new AWS.Credentials(
+                localStorage.getItem("polly_access_id"),
+                localStorage.getItem("polly_access_key")
+            );
+            const settings = {
+                awsCredentials: awsCredentials,
+                awsRegion: "us-west-2",
+                pollyVoiceId: "Seoyeon",
+                cacheSpeech: true,
+            };
+
+            window.kathy = new ChattyKathy(settings);
+            window.users = [];
+            window.speechQueue = [];
+
+            // tokens before 21/10/7 00:00(GMT+9) are invalid due to twitch hacking
+            if (
+                window.oauth !== "" &&
+                window.login !== "" &&
+                window.last_login_date > 1633532400
+            ) {
+                $(document).on("click", function () {
+                    if (window.isclicked) return;
+                    window.isclicked = true;
+                    document.getElementById("divClick").style.display = "none";
+                    document.getElementById("divContent").style.display =
+                        "block";
+
+                    if (window.channelname === "") {
+                        location.href =
+                            url.origin +
+                            url.pathname +
+                            "?channel=" +
+                            window.login;
+                    } else {
+                        client = new tmi.Client({
+                            options: {
+                                debug: true,
+                                messagesLogLevel: "info",
+                                clientId: window.oauth_client_id,
+                            },
+                            connection: {
+                                reconnect: true,
+                                secure: true,
+                            },
+                            identity: {
+                                username: window.login,
+                                password: window.oauth,
+                            },
+                            channels: [window.channelname],
+                        });
+
+                        client.on("connected", (address, port) => {
+                            checkTTS();
+                        });
+
+                        client.on(
+                            "message",
+                            function (channel, userstate, message, self) {
+                                if (self) return;
+
+                                let msg = {};
+                                msg.from = userstate["display-name"];
+                                msg.text = message;
+                                msg.color = userstate.color;
+                                if (userstate.emotes !== null)
+                                    msg.emotes = userstate.emotes;
+                                msg.action =
+                                    userstate["message-type"] == "action";
+                                console.log(userstate["badges-raw"]);
+                                msg.streamer =
+                                    userstate["badges-raw"].indexOf(
+                                        "broadcaster/1"
+                                    ) !== -1;
+                                msg.mod = userstate.mod;
+                                msg.sub = userstate.subscriber;
+                                msg.turbo = userstate.turbo;
+                                msg.badges = userstate["badges-raw"];
+                                msg.room_id = userstate["room-id"];
+                                msg.user_id = userstate["user-id"];
+
+                                parseMessage(msg);
+                            }
+                        );
+
+                        client.connect().catch(console.error);
+                    }
+                });
+            } else {
+                // there's no oauth key
+                if (
+                    document.location.hash !== "" &&
+                    document.location.hash.indexOf("access_token") !== -1
+                ) {
+                    //user already authed
+                    const rawauth = document.location.href.replace("#", "?");
+                    const authobj = new URL(rawauth);
+                    const oauth = getParams("access_token", rawauth);
+                    const state = getParams("state", rawauth);
+                    const localstate = localStorage.getItem("state");
+                    const last_url = localStorage.getItem("last_url");
+                    const last_url_obj = new URL(last_url);
+
+                    document.body.innerHTML = "";
+
+                    if (last_url_obj.origin !== authobj.origin) {
+                        document.write("SECURITY ERROR");
+                    } else {
+                        if (
+                            localstate === null ||
+                            localstate === "" ||
+                            state !== localstate
+                        ) {
+                            document.write(
+                                "잘못된 state값이 전달되었습니다. 페이지를 새로고침 해보세요.<br />Invalid state. please refresh and retry."
+                            );
+                        } else {
+                            localStorage.setItem("oauth", oauth);
+                            localStorage.setItem("state", "");
+                            localStorage.setItem("last_url", "");
+                            fetch("https://api.twitch.tv/helix/users", {
+                                headers: {
+                                    "Client-ID": window.oauth_client_id,
+                                    Authorization: "Bearer " + oauth,
+                                },
+                            })
+                                .then(function (response) {
+                                    return response.json();
+                                })
+                                .then(function (result) {
+                                    localStorage.setItem(
+                                        "login",
+                                        result.data[0].login
+                                    );
+                                    localStorage.setItem(
+                                        "display_name",
+                                        result.data[0].display_name
+                                    );
+                                    localStorage.setItem(
+                                        "last_login_date",
+                                        Math.floor(new Date().getTime() / 1000)
+                                    );
+
+                                    location.href = last_url;
+                                });
+                        }
+                    }
+                } else {
+                    //not authed yet
+                    const state = md5(Date.now());
+                    localStorage.setItem("state", state);
+                    localStorage.setItem("last_url", location.href);
+
+                    document.body.innerHTML = "";
+                    document.write(
+                        '트위치로 로그인해야 사용하실수 있습니다.<br />2021년 10월 7일 이전에 로그인하셨다면 트위치 해킹으로 인해 키가 유출되었을 가능성이 있어 재로그인하셔야 합니다.<br /><br /> <a href="https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=' +
+                            window.oauth_client_id +
+                            "&redirect_uri=" +
+                            window.oauth_redirect_uri +
+                            "&scope=bits:read%20channel:read:hype_train%20channel:read:redemptions%20channel:read:subscriptions%20chat:read%20chat:edit&state=" +
+                            state +
+                            '">트위치 아이디로 로그인</a>'
+                    );
+                }
+            }
+        </script>
+    </body>
 </html>
