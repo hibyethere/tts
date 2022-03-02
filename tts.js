@@ -2,46 +2,46 @@
  * @file TTS Helper script
  * @copyright Lastorder-DC 2017-2021
  */
- 
+
 window.success = window.createNotification({
     closeOnClick: false,
     displayCloseButton: true,
-    positionClass: 'nfc-top-left',
+    positionClass: "nfc-top-left",
     showDuration: 3000,
-    theme: 'success'
+    theme: "success",
 });
 
 window.warning = window.createNotification({
     closeOnClick: false,
     displayCloseButton: true,
-    positionClass: 'nfc-top-left',
+    positionClass: "nfc-top-left",
     showDuration: 3000,
-    theme: 'warning'
+    theme: "warning",
 });
 
 window.error = window.createNotification({
     closeOnClick: false,
     displayCloseButton: true,
-    positionClass: 'nfc-top-left',
+    positionClass: "nfc-top-left",
     showDuration: 3000,
-    theme: 'error'
+    theme: "error",
 });
 
 window.plain = window.createNotification({
     closeOnClick: false,
     displayCloseButton: true,
-    positionClass: 'nfc-top-left',
+    positionClass: "nfc-top-left",
     showDuration: 3000,
-    theme: 'none'
+    theme: "none",
 });
 
 /**
  * 채널 변경 함수
  */
 function change_channel() {
-    bootbox.prompt("채널 아이디를 입력해주세요.", function(result){ 
+    bootbox.prompt("채널 아이디를 입력해주세요.", function (result) {
         if (result === "" || result == null) {
-            location.reload()
+            location.reload();
         } else {
             window.channelname = result;
             location.href = url.origin + url.pathname + "?channel=" + result;
@@ -55,7 +55,7 @@ function change_channel() {
 function scrollBottom() {
     const objDiv = document.getElementById("last_read");
     objDiv.scrollTop = objDiv.scrollHeight;
-    if(!window.stopScroll) setTimeout(scrollBottom, 100);
+    if (!window.stopScroll) setTimeout(scrollBottom, 100);
 }
 
 /**
@@ -65,14 +65,16 @@ function scrollBottom() {
  * @param {Boolean} usecoloredchat 색챗 사용여부(미사용)
  */
 function displayResultFromUI(result, msg, usecoloredchat = true) {
-    if(result) window.success({ 
-        title: '작업 성공',
-        message: msg 
-    });
-    else window.error({ 
-        title: '작업 실패',
-        message: msg 
-    });
+    if (result)
+        window.success({
+            title: "작업 성공",
+            message: msg,
+        });
+    else
+        window.error({
+            title: "작업 실패",
+            message: msg,
+        });
 }
 
 /**
@@ -83,7 +85,7 @@ function displayResultFromUI(result, msg, usecoloredchat = true) {
  */
 function displayResultFromChat(result, msg, usecoloredchat = true) {
     const header = usecoloredchat ? "/me [TTSBOT] " : "[TTSBOT] ";
-    
+
     client.say(window.channelname, header + msg);
 }
 
@@ -93,14 +95,20 @@ function displayResultFromChat(result, msg, usecoloredchat = true) {
  * @param {Function} callback 실행 결과 콜백
  */
 function banUser(username, callback) {
-    if(username != "") {
+    if (username != "") {
         let index = window.banlist.indexOf(username);
         if (index === -1) {
             window.banlist.push(username);
-            localStorage.setItem("tts_banlist_" + window.channelname, window.banlist.join("|"));
+            localStorage.setItem(
+                "tts_banlist_" + window.channelname,
+                window.banlist.join("|")
+            );
             callback(true, "시청자 " + username + " 를 차단했습니다.");
         } else {
-            callback(false, "시청자 " + username + " 은 이미 차단되어 있습니다.");
+            callback(
+                false,
+                "시청자 " + username + " 은 이미 차단되어 있습니다."
+            );
         }
     } else {
         callback(false, "시청자 이름은 비어 있을수 없습니다.");
@@ -113,14 +121,20 @@ function banUser(username, callback) {
  * @param {Function} callback 실행 결과 콜백
  */
 function unbanUser(username, callback) {
-    if(username != "") {
+    if (username != "") {
         let index = window.banlist.indexOf(username);
         if (index !== -1) {
             window.banlist.splice(index, 1);
-            localStorage.setItem("tts_banlist_" + window.channelname, window.banlist.join("|"));
+            localStorage.setItem(
+                "tts_banlist_" + window.channelname,
+                window.banlist.join("|")
+            );
             callback(true, "시청자 " + username + " 를 차단 해제했습니다.");
         } else {
-            callback(false, "시청자 " + username + " 는 차단되어 있지 않습니다.");
+            callback(
+                false,
+                "시청자 " + username + " 는 차단되어 있지 않습니다."
+            );
         }
     } else {
         callback(false, "시청자 이름은 비어 있을수 없습니다.");
@@ -206,7 +220,12 @@ function setMaxLength(length, callback) {
         window.maxlength = parseInt(length);
         if (window.maxlength > 120) window.maxlength = 120;
         localStorage.setItem("tts_maxlength", window.maxlength.toString());
-        callback(true, "최대 TTS 글자수가 " + window.maxlength.toString() + "글자로 바뀌었습니다.");
+        callback(
+            true,
+            "최대 TTS 글자수가 " +
+                window.maxlength.toString() +
+                "글자로 바뀌었습니다."
+        );
     } else {
         callback(false, "잘못된 숫자 " + length + "가 입력되었습니다.");
     }
@@ -222,7 +241,10 @@ function setVolume(volume, callback) {
         window.volume = parseInt(volume);
         if (window.volume > 100) window.volume = 100;
         localStorage.setItem("tts_volume", window.volume.toString());
-        callback(true, "TTS 볼륨이 " + window.volume.toString() + "로 바뀌었습니다.");
+        callback(
+            true,
+            "TTS 볼륨이 " + window.volume.toString() + "로 바뀌었습니다."
+        );
     } else {
         callback(false, "잘못된 숫자 " + volume + "가 입력되었습니다.");
     }
@@ -232,8 +254,11 @@ function setVolume(volume, callback) {
  * 차단 목록 초기화
  */
 function clearBan(callback) {
-    window.banlist = ['Nightbot', '싹둑'];
-    localStorage.setItem("tts_banlist_" + window.channelname, window.banlist.join("|"));
+    window.banlist = ["Nightbot", "싹둑"];
+    localStorage.setItem(
+        "tts_banlist_" + window.channelname,
+        window.banlist.join("|")
+    );
     callback(true, "차단 목록을 초기화했습니다.");
 }
 
@@ -242,7 +267,10 @@ function clearBan(callback) {
  */
 function clearList(callback) {
     window.whitelist = [];
-    localStorage.setItem("tts_whitelist_" + window.channelname, window.whitelist.join("|"));
+    localStorage.setItem(
+        "tts_whitelist_" + window.channelname,
+        window.whitelist.join("|")
+    );
     callback(true, "허용 목록을 초기화했습니다.");
 }
 
@@ -256,9 +284,15 @@ function removeList(username, callback) {
         let index = window.whitelist.indexOf(username);
         if (index !== -1) {
             window.whitelist.splice(index, 1);
-            localStorage.setItem("tts_whitelist_" + window.channelname, window.whitelist.join("|"));
-            callback(true, "시청자 " + username + " 를 허용 목록에서 삭제했습니다.");
-            if(window.whitelist.length < 1) {
+            localStorage.setItem(
+                "tts_whitelist_" + window.channelname,
+                window.whitelist.join("|")
+            );
+            callback(
+                true,
+                "시청자 " + username + " 를 허용 목록에서 삭제했습니다."
+            );
+            if (window.whitelist.length < 1) {
                 callback(true, "허용 목록이 비었으므로 비활성화됩니다.");
             }
         } else {
@@ -278,13 +312,22 @@ function addList(username, callback) {
         let index = window.whitelist.indexOf(username);
         if (index === -1) {
             window.whitelist.push(username);
-            localStorage.setItem("tts_whitelist_" + window.channelname, window.whitelist.join("|"));
-            callback(true, "시청자 " + username + " 를 허용 목록에 추가했습니다.");
-            if(old_length == 0) {
+            localStorage.setItem(
+                "tts_whitelist_" + window.channelname,
+                window.whitelist.join("|")
+            );
+            callback(
+                true,
+                "시청자 " + username + " 를 허용 목록에 추가했습니다."
+            );
+            if (old_length == 0) {
                 callback(true, "이제부터 허용 목록을 사용합니다.");
             }
         } else {
-            callback(false, "시청자 " + username + " 는 이미 허용 목록에 있습니다.");
+            callback(
+                false,
+                "시청자 " + username + " 는 이미 허용 목록에 있습니다."
+            );
         }
     }
 }
@@ -299,10 +342,16 @@ function delKeyword(keyword, callback) {
         let index = window.bankeyword.indexOf(escapeRegExp(keyword));
         if (index !== -1) {
             window.bankeyword.splice(index, 1);
-            localStorage.setItem("tts_bankeyword_" + window.channelname, window.bankeyword.join("|"));
+            localStorage.setItem(
+                "tts_bankeyword_" + window.channelname,
+                window.bankeyword.join("|")
+            );
             callback(true, "키워드 " + keyword + " 를 차단 해제했습니다.");
         } else {
-            callback(false, "키워드 " + keyword + " 는 차단되어 있지 않습니다.");
+            callback(
+                false,
+                "키워드 " + keyword + " 는 차단되어 있지 않습니다."
+            );
         }
     }
 }
@@ -317,10 +366,16 @@ function addKeyword(keyword, callback) {
         let index = window.bankeyword.indexOf(escapeRegExp(keyword));
         if (index === -1) {
             window.bankeyword.push(escapeRegExp(keyword));
-            localStorage.setItem("tts_bankeyword_" + window.channelname, window.bankeyword.join("|"));
+            localStorage.setItem(
+                "tts_bankeyword_" + window.channelname,
+                window.bankeyword.join("|")
+            );
             callback(true, "키워드 " + keyword + " 를 차단했습니다.");
         } else {
-            callback(false, "키워드 " + keyword + " 은 이미 차단되어 있습니다.");
+            callback(
+                false,
+                "키워드 " + keyword + " 은 이미 차단되어 있습니다."
+            );
         }
     }
 }
@@ -329,20 +384,23 @@ function addKeyword(keyword, callback) {
  * TTS 체크하여 사용 가능 여부 설정
  */
 function checkTTS() {
-    if ('speechSynthesis' in window) {
+    if ("speechSynthesis" in window) {
         window.utterances = [];
 
-        const msg = new SpeechSynthesisUtterance(window.channelname + " 채널에 연결되었습니다.");
+        const msg = new SpeechSynthesisUtterance(
+            window.channelname + " 채널에 연결되었습니다."
+        );
         msg.rate = 1.3;
         speechSynthesis.cancel();
 
         msg.onerror = function (event) {
             console.debug("onerror event - " + JSON.stringify(event));
             if (speechSynthesis.getVoices().length === 0) {
-                document.getElementById("last_read").innerHTML = "사용 가능한 TTS 보이스가 없습니다.";
+                document.getElementById("last_read").innerHTML =
+                    "사용 가능한 TTS 보이스가 없습니다.";
             } else {
-                document.getElementById("last_read").innerHTML = "알 수 없는 오류가 발생했습니다. 브라우저 콘솔창을 참조하세요.";
-
+                document.getElementById("last_read").innerHTML =
+                    "알 수 없는 오류가 발생했습니다. 브라우저 콘솔창을 참조하세요.";
             }
         };
 
@@ -414,20 +472,20 @@ function parseCmd(e) {
                 banUser(command, displayResultFromChat);
             }
         }
-        
+
         if (command.indexOf("clearban") !== -1) {
             clearBan(displayResultFromChat);
         }
-        
+
         if (command.indexOf("clearlist") !== -1) {
             clearList(displayResultFromChat);
         }
-        
+
         if (command.indexOf("removelist ") !== -1) {
             command = command.replace("removelist ", "");
             removeList(command, displayResultFromChat);
         }
-        
+
         if (command.indexOf("addlist ") !== -1) {
             command = command.replace("addlist ", "");
             addList(command, displayResultFromChat);
@@ -437,7 +495,7 @@ function parseCmd(e) {
             command = command.replace("del ", "");
             delKeyword(command, displayResultFromChat);
         }
-        
+
         if (command.indexOf("add ") !== -1) {
             command = command.replace("add ", "");
             addKeyword(command, displayResultFromChat);
@@ -452,20 +510,25 @@ function parseCmd(e) {
 function parseChat(e) {
     let personality_pitch;
     let personality_speed;
-    
+
     // 초기화 후에만 읽음
     if (window.initok) {
         const index = window.banlist.indexOf(e.from);
-        const index_whitelist = window.whitelist.length != 0 ? window.whitelist.indexOf(e.from) : 0;
+        const index_whitelist =
+            window.whitelist.length != 0 ? window.whitelist.indexOf(e.from) : 0;
         let message = e.text;
-        const keyword_test = new RegExp("(" + window.bankeyword.join("|") + ")", "g");
+        const keyword_test = new RegExp(
+            "(" + window.bankeyword.join("|") + ")",
+            "g"
+        );
         let voicename = window.def_voice;
 
         // Personality 적용
         const personality_range1 = [1, 1.4];
         const personality_range2 = [0.9, 1.2];
 
-        let personality_int1 = 0, personality_int2 = 0;
+        let personality_int1 = 0,
+            personality_int2 = 0;
 
         // 금지단어 포함 메세지 전체 읽지 않음
         if (keyword_test.test(message)) return;
@@ -475,16 +538,28 @@ function parseChat(e) {
                 personality_int1 += e.from.charCodeAt(i);
                 personality_int2 |= e.from.charCodeAt(i);
             }
-            personality_int1 %= ((personality_range1[1] * 10 - personality_range1[0] * 10) + 1);
-            personality_int2 %= ((personality_range2[1] * 10 - personality_range2[0] * 10) + 1);
+            personality_int1 %=
+                personality_range1[1] * 10 - personality_range1[0] * 10 + 1;
+            personality_int2 %=
+                personality_range2[1] * 10 - personality_range2[0] * 10 + 1;
 
-            personality_speed = 1 + (personality_int1 / 10) - (1 - personality_range1[0]);
-            if (personality_speed < 0.8) personality_speed = window.nonmod_speed;
-            personality_speed = Math.min(personality_speed, personality_range1[1]);
+            personality_speed =
+                1 + personality_int1 / 10 - (1 - personality_range1[0]);
+            if (personality_speed < 0.8)
+                personality_speed = window.nonmod_speed;
+            personality_speed = Math.min(
+                personality_speed,
+                personality_range1[1]
+            );
 
-            personality_pitch = 1 + (personality_int2 / 10) - (1 - personality_range2[0]);
-            if (personality_pitch < 0.8) personality_pitch = window.nonmod_speed;
-            personality_pitch = Math.min(personality_pitch, personality_range2[1]);
+            personality_pitch =
+                1 + personality_int2 / 10 - (1 - personality_range2[0]);
+            if (personality_pitch < 0.8)
+                personality_pitch = window.nonmod_speed;
+            personality_pitch = Math.min(
+                personality_pitch,
+                personality_range2[1]
+            );
         } else {
             personality_speed = 1;
             personality_pitch = 1;
@@ -493,12 +568,18 @@ function parseChat(e) {
         // 메세지 필터링
         // 클립 링크는 "클립"으로 읽음
         message = message.replace(/https:\/\/clips.twitch.tv\/[^ ]+/g, "클립");
-        
+
         // 210229 신규 클립링크(twitch.tv/(bid)/clip/(cid)도 바꿈
-        message = message.replace(/https:\/\/www.twitch.tv\/[^\/]+\/clip\/[^ ]+/g, "클립");
+        message = message.replace(
+            /https:\/\/www.twitch.tv\/[^\/]+\/clip\/[^ ]+/g,
+            "클립"
+        );
 
         // 링크는 "링크"로 읽음
-        message = message.replace(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_+.~#?&/=]*)/g, "링크");
+        message = message.replace(
+            /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_+.~#?&/=]*)/g,
+            "링크"
+        );
 
         // ? [ ] { } ( )는 읽지 않음
         message = message.replace(/[\[\](){}]/g, "");
@@ -537,26 +618,77 @@ function parseChat(e) {
         message = message.replace(/^!.*/g, "");
 
         // /me 명령어 입력시 나타나는 맨 마지막 \x01 제거
-        if (message.charCodeAt(message.length - 1) === 1) message = message.substr(0, message.length - 1);
+        if (message.charCodeAt(message.length - 1) === 1)
+            message = message.substr(0, message.length - 1);
 
         // 트위치 이모티콘은 읽지 않음
         message = replaceTwitchEmoticon(message, e.emotes);
         if (message !== "") {
             // 모더레이터/스트리머는 설정 무관 최대 120글자 읽기 가능
-            if (((e.mod && index === -1) || e.streamer || e.badges.indexOf("broadcaster/1") !== -1) && message.length < 120) {
-                playText(message, personality_speed, personality_pitch, false, e.from, voicename, (!e.streamer && e.badges.indexOf("broadcaster/1") === -1));
+            if (
+                ((e.mod && index === -1) ||
+                    e.streamer ||
+                    e.badges.indexOf("broadcaster/1") !== -1) &&
+                message.length < 120
+            ) {
+                playText(
+                    message,
+                    personality_speed,
+                    personality_pitch,
+                    false,
+                    e.from,
+                    voicename,
+                    !e.streamer && e.badges.indexOf("broadcaster/1") === -1
+                );
             } else {
                 // 화이트리스트 사용시 화이트리스트에 있는 아이디 + 밴리스트에 없는 아이디 + 채팅 길이가 지정된 길이 미만
-                if (index_whitelist !== -1 && index === -1 && message.length < window.maxlength) {
+                if (
+                    index_whitelist !== -1 &&
+                    index === -1 &&
+                    message.length < window.maxlength
+                ) {
                     if (window.tts_subonly) {
-                        if (e.sub || e.founder) playText(message, personality_speed, personality_pitch, false, e.from, voicename, true);
+                        if (e.sub || e.founder)
+                            playText(
+                                message,
+                                personality_speed,
+                                personality_pitch,
+                                false,
+                                e.from,
+                                voicename,
+                                true
+                            );
                     } else if (window.tts_founderonly) {
-                        if (e.founder) playText(message, personality_speed, personality_pitch, false, e.from, voicename, true);
+                        if (e.founder)
+                            playText(
+                                message,
+                                personality_speed,
+                                personality_pitch,
+                                false,
+                                e.from,
+                                voicename,
+                                true
+                            );
                     } else {
-                        playText(message, personality_speed, personality_pitch, false, e.from, voicename, true);
+                        playText(
+                            message,
+                            personality_speed,
+                            personality_pitch,
+                            false,
+                            e.from,
+                            voicename,
+                            true
+                        );
                     }
                 } else {
-                    document.getElementById("last_read").innerHTML += "<i class='xi-ban' style='cursor: pointer;' onclick='unbanUser(\"" + e.from + "\", displayResultFromUI)'></i>&nbsp;<s><b>" + e.from + "</b>:" + message + "</s><br />\n";
+                    document.getElementById("last_read").innerHTML +=
+                        "<i class='xi-ban' style='cursor: pointer;' onclick='unbanUser(\"" +
+                        e.from +
+                        "\", displayResultFromUI)'></i>&nbsp;<s><b>" +
+                        e.from +
+                        "</b>:" +
+                        message +
+                        "</s><br />\n";
                 }
             }
         }
@@ -568,7 +700,10 @@ function parseChat(e) {
  * @param {Object} e 채팅 오브젝트
  */
 function parseMessage(e) {
-    if ((e.mod || e.streamer || e.badges.indexOf("broadcaster/1") !== -1) && e.text.match(/!!tts /) !== null) {
+    if (
+        (e.mod || e.streamer || e.badges?.indexOf("broadcaster/1") !== -1) &&
+        e.text.match(/!!tts /) !== null
+    ) {
         parseCmd(e);
     } else {
         parseChat(e);
@@ -585,83 +720,131 @@ function parseMessage(e) {
  * @param {String} voicename 사용할 보이스명
  * @param {Boolean} banable 차단 가능 여부(내부 메세지의 경우 false)
  */
-function playText(string, speed, pitch, ignoreKor, nickname, voicename, banable = false) {
+function playText(
+    string,
+    speed,
+    pitch,
+    ignoreKor,
+    nickname,
+    voicename,
+    banable = false
+) {
     string = string.trim();
     if (string === "") {
         parseQueue();
         return;
     }
 
-    if ('speechSynthesis' in window) {
+    if ("speechSynthesis" in window) {
         let i = 0;
         let voiceIdx = -1;
         let voiceLang = "en-US";
         let detectedLanguage = "none";
         const check = [];
-        check['kor'] = /[ㄱ-ㅎㅏ-ㅣ가-힣]/;
-        check['jpn'] = /[\u3040-\u30ff\u31f0-\u31ff]/;
-        check['chn'] = /\p{Script=Han}/u;
-        
-        for(idx in window.languagelist) {
-            if(window.languagelist[idx] == "kor" && check["kor"].test(string)) {
+        check["kor"] = /[ㄱ-ㅎㅏ-ㅣ가-힣]/;
+        check["jpn"] = /[\u3040-\u30ff\u31f0-\u31ff]/;
+        check["chn"] = /\p{Script=Han}/u;
+
+        for (idx in window.languagelist) {
+            if (
+                window.languagelist[idx] == "kor" &&
+                check["kor"].test(string)
+            ) {
                 detectedLanguage = "kor";
                 break;
-            } else if(window.languagelist[idx] == "jpn" && (check["jpn"].test(string) || check["chn"].test(string))) {
+            } else if (
+                window.languagelist[idx] == "jpn" &&
+                (check["jpn"].test(string) || check["chn"].test(string))
+            ) {
                 detectedLanguage = "jpn";
                 break;
-            } else if(window.languagelist[idx] == "chn" && check["chn"].test(string)) {
+            } else if (
+                window.languagelist[idx] == "chn" &&
+                check["chn"].test(string)
+            ) {
                 detectedLanguage = "chn";
                 break;
             }
         }
 
-        if (typeof voicename === 'undefined') voicename = "default";
+        if (typeof voicename === "undefined") voicename = "default";
 
         if (voicename === "default") {
             speechSynthesis.getVoices().forEach(function (voice) {
                 if (detectedLanguage == "kor") {
-                    if (voice.lang === "ko-KR" && voice.name.indexOf("Google") !== -1) {
+                    if (
+                        voice.lang === "ko-KR" &&
+                        voice.name.indexOf("Google") !== -1
+                    ) {
                         voiceLang = "ko-KR";
                         voiceIdx = i;
                     }
                 } else if (detectedLanguage == "jpn") {
-                    if (voice.lang === "ja-JP" && voice.name.indexOf("Google") !== -1) {
+                    if (
+                        voice.lang === "ja-JP" &&
+                        voice.name.indexOf("Google") !== -1
+                    ) {
                         voiceLang = "ja-JP";
                         voiceIdx = i;
                     }
                 } else if (detectedLanguage == "chn") {
-                    if (voice.lang === "zh-CN" && voice.name.indexOf("Google") !== -1) {
+                    if (
+                        voice.lang === "zh-CN" &&
+                        voice.name.indexOf("Google") !== -1
+                    ) {
                         voiceLang = "zh-CN";
                         voiceIdx = i;
                     }
                 } else {
-                    if (voice.lang === "en-US" && voice.name.indexOf("Google") !== -1) {
+                    if (
+                        voice.lang === "en-US" &&
+                        voice.name.indexOf("Google") !== -1
+                    ) {
                         voiceIdx = i;
                     }
                 }
 
                 i++;
             });
-            
+
             // TTS를 위한 객체 초기화(언어, 목소리 등 정보 포함)
             const msg = new SpeechSynthesisUtterance(string);
-            
+
             // 인식된 언어로 설정한다
             if (voiceLang != "en-US") msg.lang = voiceLang;
-            if (voiceIdx !== -1) msg.voice = speechSynthesis.getVoices()[voiceIdx];
-            
+            if (voiceIdx !== -1)
+                msg.voice = speechSynthesis.getVoices()[voiceIdx];
+
             // 이외 나머지 값 설정
             msg.from = nickname;
             msg.rate = speed;
             msg.pitch = pitch;
-            
+
             // 읽기 시작시 채팅 로그에 추가
             msg.onstart = function (event) {
-                if (typeof event.utterance.from == "undefined" || event.utterance.from === "") event.utterance.from = "Unknown";
-                if (banable && event.utterance.from !== "SYSTEM") document.getElementById("last_read").innerHTML += "<i class='xi-ban' style='cursor: pointer;' onclick='banUser(\"" + event.utterance.from + "\", displayResultFromUI)'></i>&nbsp;<b>" + event.utterance.from + "</b>:" + event.utterance.text + "<br />\n";
-                else document.getElementById("last_read").innerHTML += "<i class='xi-ban' style='color: #666' onclick='return false;'></i>&nbsp;<b>" + event.utterance.from + "</b>:" + event.utterance.text + "<br />\n";
+                if (
+                    typeof event.utterance.from == "undefined" ||
+                    event.utterance.from === ""
+                )
+                    event.utterance.from = "Unknown";
+                if (banable && event.utterance.from !== "SYSTEM")
+                    document.getElementById("last_read").innerHTML +=
+                        "<i class='xi-ban' style='cursor: pointer;' onclick='banUser(\"" +
+                        event.utterance.from +
+                        "\", displayResultFromUI)'></i>&nbsp;<b>" +
+                        event.utterance.from +
+                        "</b>:" +
+                        event.utterance.text +
+                        "<br />\n";
+                else
+                    document.getElementById("last_read").innerHTML +=
+                        "<i class='xi-ban' style='color: #666' onclick='return false;'></i>&nbsp;<b>" +
+                        event.utterance.from +
+                        "</b>:" +
+                        event.utterance.text +
+                        "<br />\n";
             };
-            
+
             // 읽기 종료(일단은 로그 이외 아무것도 하지 않는다)
             msg.onend = function (event) {
                 if (window.debugmode) console.log("msg read event");
@@ -681,13 +864,35 @@ function playText(string, speed, pitch, ignoreKor, nickname, voicename, banable 
             string = replaceChosung(string);
             const obj = {};
             obj.type = "polly";
-            obj.msg = '<speak><prosody rate="' + parseInt(speed * 100) + '%" pitch="' + parseInt(pitch * 100 - 100) + '%">' + string + '</prosody></speak>';
+            obj.msg =
+                '<speak><prosody rate="' +
+                parseInt(speed * 100) +
+                '%" pitch="' +
+                parseInt(pitch * 100 - 100) +
+                '%">' +
+                string +
+                "</prosody></speak>";
             obj.volume = window.volume / 100;
             window.speechQueue.push(obj);
-            
-            if (typeof nickname == "undefined" || nickname === "") nickname = "Unknown";
-            if (banable && nickname !== "SYSTEM") document.getElementById("last_read").innerHTML += "<i class='xi-ban' style='cursor: pointer;' onclick='banUser(\"" + nickname + "\", displayResultFromUI)'></i>&nbsp;<b>" + nickname + "</b>:" + string + "<br />\n";
-            else document.getElementById("last_read").innerHTML += "<i class='xi-ban' style='color: #666' onclick='return false;'></i>&nbsp;<b>" + nickname + "</b>:" + string + "<br />\n";
+
+            if (typeof nickname == "undefined" || nickname === "")
+                nickname = "Unknown";
+            if (banable && nickname !== "SYSTEM")
+                document.getElementById("last_read").innerHTML +=
+                    "<i class='xi-ban' style='cursor: pointer;' onclick='banUser(\"" +
+                    nickname +
+                    "\", displayResultFromUI)'></i>&nbsp;<b>" +
+                    nickname +
+                    "</b>:" +
+                    string +
+                    "<br />\n";
+            else
+                document.getElementById("last_read").innerHTML +=
+                    "<i class='xi-ban' style='color: #666' onclick='return false;'></i>&nbsp;<b>" +
+                    nickname +
+                    "</b>:" +
+                    string +
+                    "<br />\n";
         }
 
         parseQueue();
@@ -709,7 +914,7 @@ function replaceChosung(str) {
     str = str.replace(/ㅌ/g, "티읕");
     str = str.replace(/ㅍ/g, "피읖");
     str = str.replace(/ㅎ/g, "히읗");
-    
+
     return str;
 }
 
@@ -719,7 +924,7 @@ function replaceChosung(str) {
  * @returns {String}
  */
 function escapeRegExp(str) {
-    return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
 }
 
 /**
@@ -732,16 +937,19 @@ function replaceTwitchEmoticon(message, emotes) {
     let ranges, id, emote_id, regExp;
     const replace_list = {};
 
-    if (typeof emotes != 'undefined') {
+    if (typeof emotes != "undefined") {
         const emote_list = emotes.split("/");
         emote_list.forEach(function (emote_replace) {
             ranges = emote_replace.split(":");
             id = ranges[0];
-            if (typeof ranges[1] == 'undefined') return;
+            if (typeof ranges[1] == "undefined") return;
             ranges = ranges[1].split(",");
-            if (typeof ranges[0] != 'undefined') {
+            if (typeof ranges[0] != "undefined") {
                 ranges = ranges[0].split("-");
-                emote_id = message.substring(parseInt(ranges[0]), parseInt(ranges[1]) + 1);
+                emote_id = message.substring(
+                    parseInt(ranges[0]),
+                    parseInt(ranges[1]) + 1
+                );
                 replace_list[emote_id] = id;
             }
         });
@@ -766,8 +974,8 @@ function getParams(name, address = window.location.href) {
     let results = "";
 
     url = new URL(address);
-    if (typeof url.searchParams === 'undefined') {
-        results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(address);
+    if (typeof url.searchParams === "undefined") {
+        results = new RegExp("[?&]" + name + "=([^&#]*)").exec(address);
         if (results == null) {
             return null;
         } else {
@@ -790,7 +998,7 @@ function parseQueue() {
     }
 
     var obj = queue.shift();
-    if (typeof obj === 'undefined') {
+    if (typeof obj === "undefined") {
         setTimeout(parseQueue, 100);
         return;
     }
@@ -813,20 +1021,24 @@ function parseQueue() {
  * 언어 선택 함수
  */
 function setLanguage(language, status) {
-    if(window.languagelist.indexOf(language) === -1) {
+    if (window.languagelist.indexOf(language) === -1) {
         window.languagelist.push(language);
         document.getElementById("chk-enable-" + language).checked = true;
         document.getElementById("ord-" + language).innerText = window.curOrd++;
     } else {
         window.languagelist.splice(window.languagelist.indexOf(language), 1);
         document.getElementById("chk-enable-" + language).checked = false;
-        document.getElementById("ord-" + language).innerText = '비활성화';
+        document.getElementById("ord-" + language).innerText = "비활성화";
         window.curOrd = 1;
-        for(idx in window.languagelist) {
-            document.getElementById("chk-enable-" + window.languagelist[idx]).checked = true;
-            document.getElementById("ord-" + window.languagelist[idx]).innerText = window.curOrd++;
+        for (idx in window.languagelist) {
+            document.getElementById(
+                "chk-enable-" + window.languagelist[idx]
+            ).checked = true;
+            document.getElementById(
+                "ord-" + window.languagelist[idx]
+            ).innerText = window.curOrd++;
         }
     }
-    
+
     localStorage.setItem("languagelist", JSON.stringify(window.languagelist));
 }
