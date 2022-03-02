@@ -90,6 +90,32 @@ function displayResultFromChat(result, msg, usecoloredchat = true) {
 }
 
 /**
+ * 시청자 TTS 랜덤 변경
+ * @param {String} username 시청자 이름
+ * @param {Function} callback 실행 결과 콜백
+ */
+function randomVoice(username, callback) {
+    let randomSpeed = Math.random() * (2.0 - 0.7) + 0.7;
+    let randomPitch = Math.random() * (2.0 - 0.7) + 0.7;
+    if (username != "") {
+        localStorage.setItem(username + ":speed", randomSpeed.toFixed(1));
+        localStorage.setItem(username + ":pitch", randomPitch.toFixed(1));
+        callback(
+            true,
+            "시청자 " +
+                username +
+                " 의 성대 Speed: " +
+                randomSpeed +
+                ", Pitch: " +
+                randomPitch +
+                "로 전환되었습니다."
+        );
+    } else {
+        callback(false, "시청자 이름은 비어 있을수 없습니다.");
+    }
+}
+
+/**
  * 시청자 TTS 차단
  * @param {String} username 시청자 이름
  * @param {Function} callback 실행 결과 콜백
@@ -473,6 +499,11 @@ function parseCmd(e) {
             }
         }
 
+        if (command.indexOf("random ") !== -1) {
+            command = command.replace("random ", "");
+            randomVoice(command, displayResultFromChat);
+        }
+
         if (command.indexOf("clearban") !== -1) {
             clearBan(displayResultFromChat);
         }
@@ -623,6 +654,25 @@ function parseChat(e) {
 
         // 트위치 이모티콘은 읽지 않음
         message = replaceTwitchEmoticon(message, e.emotes);
+
+        let fromSpeed =
+            localStorage.getItem(e.from + ":speed") !== null
+                ? localStorage.getItem(e.from + ":speed")
+                : "none";
+
+        let fromPitch =
+            localStorage.getItem(e.from + ":pitch") !== null
+                ? localStorage.getItem(e.from + ":pitch")
+                : "none";
+
+        if (fromSpeed !== "none") {
+            personality_speed = fromSpeed;
+        }
+
+        if (fromPitch !== "none") {
+            personality_pitch = fromPitch;
+        }
+
         if (message !== "") {
             // 모더레이터/스트리머는 설정 무관 최대 120글자 읽기 가능
             if (
