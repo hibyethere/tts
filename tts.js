@@ -655,7 +655,7 @@ function parseChat(e) {
         // 트위치 이모티콘은 읽지 않음
         message = replaceTwitchEmoticon(message, e.emotes);
 
-        console.log(e.from);
+        console.log(e);
 
         let fromSpeed =
             localStorage.getItem(e.from + ":speed") !== null
