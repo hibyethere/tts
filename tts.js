@@ -105,9 +105,9 @@ function randomVoice(username, callback) {
             "시청자 " +
                 username +
                 " 의 성대 Speed: " +
-                randomSpeed +
+                randomSpeed.toFixed(1) +
                 ", Pitch: " +
-                randomPitch +
+                randomPitch.toFixed(1) +
                 "로 전환되었습니다."
         );
     } else {
@@ -654,6 +654,8 @@ function parseChat(e) {
 
         // 트위치 이모티콘은 읽지 않음
         message = replaceTwitchEmoticon(message, e.emotes);
+
+        console.log(e.from);
 
         let fromSpeed =
             localStorage.getItem(e.from + ":speed") !== null
