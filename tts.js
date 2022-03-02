@@ -628,7 +628,7 @@ function parseChat(e) {
             if (
                 ((e.mod && index === -1) ||
                     e.streamer ||
-                    e.badges.indexOf("broadcaster/1") !== -1) &&
+                    e.badges?.indexOf("broadcaster/1") !== -1) &&
                 message.length < 120
             ) {
                 playText(
@@ -638,7 +638,7 @@ function parseChat(e) {
                     false,
                     e.from,
                     voicename,
-                    !e.streamer && e.badges.indexOf("broadcaster/1") === -1
+                    !e.streamer && e.badges?.indexOf("broadcaster/1") === -1
                 );
             } else {
                 // 화이트리스트 사용시 화이트리스트에 있는 아이디 + 밴리스트에 없는 아이디 + 채팅 길이가 지정된 길이 미만
