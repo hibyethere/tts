@@ -137,6 +137,7 @@ function initializeVoice(username, callback) {
  */
 function moveVoice(username, callback) {
     if (username != "") {
+        console.log(username);
         let user1 = username.split()[0];
         let user2 = username.split()[1];
         localStorage.setItem(
