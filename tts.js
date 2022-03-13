@@ -131,6 +131,36 @@ function initializeVoice(username, callback) {
 }
 
 /**
+ * 시청자 TTS 보이스 이관
+ * @param {String} username 시청자 이름
+ * @param {Function} callback 실행 결과 콜백
+ */
+function moveVoice(username, callback) {
+    if (username != "") {
+        let user1 = username.split()[0];
+        let user2 = username.split()[1];
+        localStorage.setItem(
+            user2 + ":speed",
+            localStorage.getItem(user1 + ":speed")
+        );
+        localStorage.setItem(
+            user2 + ":pitch",
+            localStorage.getItem(user1 + ":pitch")
+        );
+        callback(
+            true,
+            "시청자 " +
+                user1 +
+                " 의 성대를 " +
+                user2 +
+                "에게 이식 수술하였습니다."
+        );
+    } else {
+        callback(false, "시청자 이름은 비어 있을수 없습니다.");
+    }
+}
+
+/**
  * 시청자 TTS 차단
  * @param {String} username 시청자 이름
  * @param {Function} callback 실행 결과 콜백
@@ -522,6 +552,11 @@ function parseCmd(e) {
         if (command.indexOf("init ") !== -1) {
             command = command.replace("init ", "");
             initializeVoice(command, displayResultFromChat);
+        }
+
+        if (command.indexOf("move ") !== -1) {
+            command = command.replace("move ", "");
+            moveVoice(command, displayResultFromChat);
         }
 
         if (command.indexOf("clearban") !== -1) {
