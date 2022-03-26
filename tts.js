@@ -734,10 +734,10 @@ function parseChat(e) {
         if (message !== "") {
             // 모더레이터/스트리머는 설정 무관 최대 120글자 읽기 가능
             if (
-                ((e.mod && index === -1) ||
-                    e.streamer ||
-                    e.badges?.indexOf("broadcaster/1") !== -1) &&
-                message.length < 120
+                (e.mod && index === -1) ||
+                (!window.tts_vieweronly &&
+                    (e.streamer || e.badges.indexOf("broadcaster/1") !== -1) &&
+                    message.length < 120)
             ) {
                 playText(
                     message,
@@ -809,7 +809,7 @@ function parseChat(e) {
  */
 function parseMessage(e) {
     if (
-        (e.mod || e.streamer || e.badges?.indexOf("broadcaster/1") !== -1) &&
+        (e.mod || e.streamer || e.badges.indexOf("broadcaster/1") !== -1) &&
         e.text.match(/!!tts /) !== null
     ) {
         parseCmd(e);
