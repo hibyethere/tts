@@ -210,7 +210,7 @@ function checkVoice(username, callback) {
                 username +
                 "의 성대 Speed: " +
                 fromSpeed +
-                "Pitch: " +
+                ", Pitch: " +
                 fromPitch
         );
     } else {
