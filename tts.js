@@ -96,7 +96,7 @@ function displayResultFromChat(result, msg, usecoloredchat = true) {
  */
 function randomVoice(username, callback) {
     let randomSpeed = Math.random() * (1.4 - 0.7) + 0.7;
-    let randomPitch = Math.random() * (1.4 - 0.7) + 0.7;
+    let randomPitch = Math.random() * (1.3 - 0.7) + 0.7;
     if (username != "") {
         localStorage.setItem(username + ":speed", randomSpeed.toFixed(1));
         localStorage.setItem(username + ":pitch", randomPitch.toFixed(1));
