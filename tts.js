@@ -95,8 +95,8 @@ function displayResultFromChat(result, msg, usecoloredchat = true) {
  * @param {Function} callback 실행 결과 콜백
  */
 function randomVoice(username, callback) {
-    let randomSpeed = Math.random() * (1.3 - 0.8) + 0.8;
-    let randomPitch = Math.random() * (1.3 - 0.8) + 0.8;
+    let randomSpeed = Math.random() * (1.4 - 0.7) + 0.7;
+    let randomPitch = Math.random() * (1.4 - 0.7) + 0.7;
     if (username != "") {
         localStorage.setItem(username + ":speed", randomSpeed.toFixed(1));
         localStorage.setItem(username + ":pitch", randomPitch.toFixed(1));
@@ -155,6 +155,56 @@ function moveVoice(username, callback) {
                 " 의 성대를 " +
                 user2 +
                 "에게 이식 수술하였습니다."
+        );
+    } else {
+        callback(false, "시청자 이름은 비어 있을수 없습니다.");
+    }
+}
+
+/**
+ * 시청자 TTS 보이스 체크
+ * @param {String} username 시청자 이름
+ * @param {Function} callback 실행 결과 콜백
+ */
+function checkVoice(username, callback) {
+    if (username != "") {
+        for (let i = 0; i < username.length; i++) {
+            personality_int1 += e.from.charCodeAt(i);
+            personality_int2 |= e.from.charCodeAt(i);
+        }
+        personality_int1 %=
+            personality_range1[1] * 10 - personality_range1[0] * 10 + 1;
+        personality_int2 %=
+            personality_range2[1] * 10 - personality_range2[0] * 10 + 1;
+
+        personality_speed =
+            1 + personality_int1 / 10 - (1 - personality_range1[0]);
+        if (personality_speed < 0.8) personality_speed = window.nonmod_speed;
+        personality_speed = Math.min(personality_speed, personality_range1[1]);
+
+        personality_pitch =
+            1 + personality_int2 / 10 - (1 - personality_range2[0]);
+        if (personality_pitch < 0.8) personality_pitch = window.nonmod_speed;
+        personality_pitch = Math.min(personality_pitch, personality_range2[1]);
+
+        let fromSpeed =
+            localStorage.getItem(username + ":speed") !== null
+                ? localStorage.getItem(username + ":speed")
+                : personality_speed;
+
+        let fromPitch =
+            localStorage.getItem(username + ":pitch") !== null
+                ? localStorage.getItem(username + ":pitch")
+                : personality_pitch;
+
+        callback(
+            true,
+            "시청자 " +
+                username +
+                "의 성대 Speed: " +
+                fromSpeed +
+                "Pitch: " +
+                fromPitch
         );
     } else {
         callback(false, "시청자 이름은 비어 있을수 없습니다.");
@@ -558,6 +608,11 @@ function parseCmd(e) {
         if (command.indexOf("move ") !== -1) {
             command = command.replace("move ", "");
             moveVoice(command, displayResultFromChat);
+        }
+
+        if (command.indexOf("check ") !== -1) {
+            command = command.replace("check ", "");
+            checkVoice(command, displayResultFromChat);
         }
 
         if (command.indexOf("clearban") !== -1) {
