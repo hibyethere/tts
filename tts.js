@@ -168,6 +168,13 @@ function moveVoice(username, callback) {
  */
 function checkVoice(username, callback) {
     if (username != "") {
+        // Personality 적용
+        const personality_range1 = [1, 1.4];
+        const personality_range2 = [0.9, 1.2];
+
+        let personality_int1 = 0,
+            personality_int2 = 0;
+
         for (let i = 0; i < username.length; i++) {
             personality_int1 += e.from.charCodeAt(i);
             personality_int2 |= e.from.charCodeAt(i);
