@@ -176,8 +176,8 @@ function checkVoice(username, callback) {
             personality_int2 = 0;
 
         for (let i = 0; i < username.length; i++) {
-            personality_int1 += e.from.charCodeAt(i);
-            personality_int2 |= e.from.charCodeAt(i);
+            personality_int1 += username.charCodeAt(i);
+            personality_int2 |= username.charCodeAt(i);
         }
         personality_int1 %=
             personality_range1[1] * 10 - personality_range1[0] * 10 + 1;
