@@ -1104,12 +1104,13 @@ function escapeRegExp(str) {
  * @param emotes {String} emote list to replace
  */
 function replaceTwitchEmoticon(message, emotes) {
-    console.log(Object.values(emotes));
+    console.log(emotes);
     let ranges, id, emote_id, regExp;
     const replace_list = {};
 
     if (typeof emotes != "undefined") {
-        const emote_list = Object.values(emotes).split("/");
+        const emote_list = emotes?.split("/");
+        console.log(emote_list);
         emote_list.forEach(function (emote_replace) {
             ranges = emote_replace.split(":");
             id = ranges[0];
