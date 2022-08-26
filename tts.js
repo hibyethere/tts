@@ -1105,26 +1105,38 @@ function escapeRegExp(str) {
  */
 function replaceTwitchEmoticon(message, emotes) {
     console.log(emotes);
-    let ranges, id, emote_id, regExp;
+    let ranges, id, emote_id, regExp, a;
     const replace_list = {};
 
     if (typeof emotes != "undefined") {
-        const emote_list = emotes?.split("/");
-        console.log(emote_list);
-        emote_list.forEach(function (emote_replace) {
-            ranges = emote_replace.split(":");
-            id = ranges[0];
-            if (typeof ranges[1] == "undefined") return;
-            ranges = ranges[1].split(",");
-            if (typeof ranges[0] != "undefined") {
-                ranges = ranges[0].split("-");
+        Object.keys(emotes).forEach((key) => {
+            console.log(key);
+            emotes[key].forEach((idx) => {
+                console.log(idx);
+                ranges = idx.split("-");
                 emote_id = message.substring(
                     parseInt(ranges[0]),
                     parseInt(ranges[1]) + 1
                 );
-                replace_list[emote_id] = id;
-            }
+                replace_list[emote_id] = key;
+            });
         });
+
+        // const emote_list = emotes.split("/");
+        // emote_list.forEach(function (emote_replace) {
+        //     ranges = emote_replace.split(":");
+        //     id = ranges[0];
+        //     if (typeof ranges[1] == "undefined") return;
+        //     ranges = ranges[1].split(",");
+        //     if (typeof ranges[0] != "undefined") {
+        //         ranges = ranges[0].split("-");
+        //         emote_id = message.substring(
+        //             parseInt(ranges[0]),
+        //             parseInt(ranges[1]) + 1
+        //         );
+        //         replace_list[emote_id] = id;
+        //     }
+        // });
 
         for (const replace_id in replace_list) {
             regExp = new RegExp(escapeRegExp(replace_id), "g");
