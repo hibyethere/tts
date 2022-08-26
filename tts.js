@@ -1104,6 +1104,7 @@ function escapeRegExp(str) {
  * @param emotes {String} emote list to replace
  */
 function replaceTwitchEmoticon(message, emotes) {
+    console.log(emotes);
     let ranges, id, emote_id, regExp;
     const replace_list = {};
 
