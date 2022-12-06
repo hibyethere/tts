@@ -656,7 +656,7 @@ function parseCmd(e) {
  * 일반 채팅 해석
  * @param {Object} e 채팅 오브젝트
  */
-async function parseChat(e) {
+function parseChat(e) {
     let personality_pitch;
     let personality_speed;
 
@@ -792,7 +792,7 @@ async function parseChat(e) {
                 `@${localStorage.getItem("byeUser")} 처형 심판을 시작합니다. 10초 동안 !찬성 혹은 !반대를 선택해주세요`
             );
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 console.log('localStorage.setItem("judge", "finished")');
                 localStorage.setItem("judge", "finished");
                 client.say(
