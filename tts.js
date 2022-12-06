@@ -781,40 +781,77 @@ function parseChat(e) {
             localStorage.getItem("judge") !== "progressing" &&
             window.channelname !== "5bd96"
         ) {
+            let names = [];
+
             let byeUser = userCommand[1];
             localStorage.setItem("judge", "progressing");
             localStorage.setItem("byeUser", byeUser);
             localStorage.setItem(`agree`, 0);
             localStorage.setItem(`disagree`, 0);
+
+            client.say(
+                window.channelname,
+                `@${localStorage.getItem("byeUser")} 처형 심판을 시작합니다. 10초 동안 !찬성 혹은 !반대를 선택해주세요`
+            );
+
             setTimeout(() => {
                 console.log('localStorage.setItem("judge", "finished")');
                 localStorage.setItem("judge", "finished");
+                client.say(
+                    window.channelname,
+                    `찬성: ${localStorage.getItem(
+                        "agree"
+                    )} / 반대: ${localStorage.getItem("disagree")}`
+                );
                 if (
                     parseInt(localStorage.getItem("agree")) >
                     parseInt(localStorage.getItem("disagree"))
                 ) {
-                    client.say(window.channelname, `!처형 ${byeUser}`);
+                    client.say(window.channelname, `@${localStorage.getItem("byeUser")} cut !!!!!`);
+                    client.say(
+                        window.channelname,
+                        `!처형 ${localStorage.getItem("byeUser")}`
+                    );
                     client.say(window.channelname, `!처형`);
-                    localStorage.setItem("byeUser", "");
-                    localStorage.setItem(`agree`, 0);
-                    localStorage.setItem(`disagree`, 0);
+                } else {
+                    client.say(
+                        window.channelname,
+                        `@${localStorage.getItem("byeUser")} 개같이 생존 !!!!!`
+                    );
+                }
+                localStorage.setItem("byeUser", "");
+                localStorage.setItem(`agree`, 0);
+                localStorage.setItem(`disagree`, 0);
+
+                for (let i = 0; i < localStorage.length; i++) {
+                    if (localStorage.key(i).split(':')[0] === 'vote') {
+                        localStorage.setItem(localStorage.key(i), 'off');
+                    }
                 }
             }, 10000);
         }
 
+
         if (
             userCommand[0] === "!찬성" &&
-            localStorage.getItem("judge") === "progressing"
+            localStorage.getItem("judge") === "progressing" &&
+            localStorage.getItem(`vote:${e.from}`) !== "on"
         ) {
-            localStorage.setItem(`agree`, parseInt(localStorage.getItem("agree")) + 1);
+            localStorage.setItem(
+                `agree`,
+                parseInt(localStorage.getItem("agree")) + 1
+            );
+            localStorage.setItem(`vote:${e.from}`, "on");
         } else if (
             userCommand[0] === "!반대" &&
-            localStorage.getItem("judge") === "progressing"
+            localStorage.getItem("judge") === "progressing" &&
+            localStorage.getItem(`vote:${e.from}`) !== "on"
         ) {
             localStorage.setItem(
                 `disagree`,
                 parseInt(localStorage.getItem("disagree")) + 1
             );
+            localStorage.setItem(`vote:${e.from}`, "on");
         }
 
         let fromSpeed =
