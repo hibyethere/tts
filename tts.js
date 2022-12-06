@@ -781,8 +781,6 @@ function parseChat(e) {
             localStorage.getItem("judge") !== "progressing" &&
             window.channelname !== "5bd96"
         ) {
-            let names = [];
-
             let byeUser = userCommand[1];
             localStorage.setItem("judge", "progressing");
             localStorage.setItem("byeUser", byeUser);
@@ -812,6 +810,7 @@ function parseChat(e) {
                         window.channelname,
                         `!처형 ${localStorage.getItem("byeUser")}`
                     );
+                    sleep(1000);
                     client.say(window.channelname, `!처형`);
                 } else {
                     client.say(
@@ -830,7 +829,6 @@ function parseChat(e) {
                 }
             }, 10000);
         }
-
 
         if (
             userCommand[0] === "!찬성" &&
