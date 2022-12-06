@@ -792,7 +792,7 @@ function parseChat(e) {
                 `@${localStorage.getItem("byeUser")} 처형 심판을 시작합니다. 10초 동안 !찬성 혹은 !반대를 선택해주세요`
             );
 
-            setTimeout(async () => {
+            setTimeout(() => {
                 console.log('localStorage.setItem("judge", "finished")');
                 localStorage.setItem("judge", "finished");
                 client.say(
@@ -810,7 +810,6 @@ function parseChat(e) {
                         window.channelname,
                         `!처형 ${localStorage.getItem("byeUser")}`
                     );
-                    await sleep(1);
                     client.say(window.channelname, `!처형`);
                 } else {
                     client.say(
