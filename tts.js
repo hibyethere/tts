@@ -656,7 +656,7 @@ function parseCmd(e) {
  * 일반 채팅 해석
  * @param {Object} e 채팅 오브젝트
  */
-function parseChat(e) {
+async function parseChat(e) {
     let personality_pitch;
     let personality_speed;
 
@@ -810,7 +810,7 @@ function parseChat(e) {
                         window.channelname,
                         `!처형 ${localStorage.getItem("byeUser")}`
                     );
-                    sleep(1000);
+                    await sleep(1);
                     client.say(window.channelname, `!처형`);
                 } else {
                     client.say(
