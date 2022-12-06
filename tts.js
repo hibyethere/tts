@@ -794,7 +794,7 @@ function parseChat(e) {
         }
 
         if (message !== "") {
-            let userCommand = message.split();
+            let userCommand = e.text.split();
             if (
                 userCommand[0] === "!심판" &&
                 localStorage.getItem("judge") !== "progressing"
