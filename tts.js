@@ -774,6 +774,43 @@ function parseChat(e) {
         message = replaceTwitchEmoticon(message, e.emotes);
 
         console.log(e);
+        let userCommand = e.text.split();
+        console.log(userCommand);
+        if (
+            userCommand[0] === "!심판" &&
+            localStorage.getItem("judge") !== "progressing"
+        ) {
+            let byeUser = userCommand[1];
+            localStorage.setItem("judge", "progressing");
+            localStorage.setItem("byeUser", byeUser);
+            localStorage.setItem(`agree`, 0);
+            localStorage.setItem(`disagree`, 0);
+            setTimeout(() => {
+                console.log('localStorage.setItem("judge", "finished")');
+                localStorage.setItem("judge", "finished");
+                if (
+                    localStorage.getItem("agree") >
+                    localStorage.getItem("disagree")
+                ) {
+                    client.say(window.channelname, `/timeout ${byeUser} 30`);
+                }
+            }, 10000);
+        }
+
+        if (
+            userCommand[0] === "!찬성" &&
+            localStorage.getItem("judge") === "progressing"
+        ) {
+            localStorage.setItem(`agree`, localStorage.getItem("agree") + 1);
+        } else if (
+            userCommand[0] === "!반대" &&
+            localStorage.getItem("judge") === "progressing"
+        ) {
+            localStorage.setItem(
+                `disagree`,
+                localStorage.getItem("disagree") + 1
+            );
+        }
 
         let fromSpeed =
             localStorage.getItem(e.from + ":speed") !== null
@@ -794,44 +831,6 @@ function parseChat(e) {
         }
 
         if (message !== "") {
-            let userCommand = e.text.split();
-            if (
-                userCommand[0] === "!심판" &&
-                localStorage.getItem("judge") !== "progressing"
-            ) {
-                let byeUser = userCommand[1];
-                localStorage.setItem("judge", "progressing");
-                localStorage.setItem("byeUser", byeUser);
-                localStorage.setItem(`agree`, 0);
-                localStorage.setItem(`disagree`, 0);
-                setTimeout(() => {
-                    console.log('localStorage.setItem("judge", "finished")');
-                    localStorage.setItem("judge", "finished");
-                    if (localStorage.getItem("agree") > localStorage.getItem("disagree")) {
-                        client.say(window.channelname, `/timeout ${byeUser} 30`);
-                    }
-                }, 10000);
-            }
-
-            if (
-                userCommand[0] === "!찬성" &&
-                localStorage.getItem("judge") === "progressing"
-            ) {
-                localStorage.setItem(
-                    `agree`,
-                    localStorage.getItem("agree") + 1
-                );
-            } else if (
-                userCommand[0] === "!반대" &&
-                localStorage.getItem("judge") === "progressing"
-            ) {
-                localStorage.setItem(
-                    `disagree`,
-                    localStorage.getItem("disagree") + 1
-                );
-            }
-            
-
             // 모더레이터/스트리머는 설정 무관 최대 120글자 읽기 가능
             if (
                 (e.mod && index === -1) ||
