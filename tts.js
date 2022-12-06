@@ -805,7 +805,6 @@ function parseChat(e) {
                     parseInt(localStorage.getItem("agree")) >
                     parseInt(localStorage.getItem("disagree"))
                 ) {
-                    client.say(window.channelname, `@${localStorage.getItem("byeUser")} cut !!!!!`);
                     client.say(
                         window.channelname,
                         `!처형 ${localStorage.getItem("byeUser")}`
