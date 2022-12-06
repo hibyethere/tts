@@ -789,10 +789,13 @@ function parseChat(e) {
                 console.log('localStorage.setItem("judge", "finished")');
                 localStorage.setItem("judge", "finished");
                 if (
-                    localStorage.getItem("agree") >
-                    localStorage.getItem("disagree")
+                    parseInt(localStorage.getItem("agree")) >
+                    parseInt(localStorage.getItem("disagree"))
                 ) {
-                    client.say(window.channelname, `/timeout ${byeUser} 30`);
+                    client.say(window.channelname, `/timeout ${byeUser} 1`);
+                    localStorage.setItem("byeUser", "");
+                    localStorage.setItem(`agree`, 0);
+                    localStorage.setItem(`disagree`, 0);
                 }
             }, 10000);
         }
@@ -801,14 +804,14 @@ function parseChat(e) {
             userCommand[0] === "!찬성" &&
             localStorage.getItem("judge") === "progressing"
         ) {
-            localStorage.setItem(`agree`, localStorage.getItem("agree") + 1);
+            localStorage.setItem(`agree`, parseInt(localStorage.getItem("agree")) + 1);
         } else if (
             userCommand[0] === "!반대" &&
             localStorage.getItem("judge") === "progressing"
         ) {
             localStorage.setItem(
                 `disagree`,
-                localStorage.getItem("disagree") + 1
+                parseInt(localStorage.getItem("disagree")) + 1
             );
         }
 
