@@ -792,7 +792,8 @@ function parseChat(e) {
                     parseInt(localStorage.getItem("agree")) >
                     parseInt(localStorage.getItem("disagree"))
                 ) {
-                    client.say(window.channelname, `/timeout ${byeUser} 1`);
+                    client.say(window.channelname, `!처형 ${byeUser}`);
+                    client.say(window.channelname, `!처형`);
                     localStorage.setItem("byeUser", "");
                     localStorage.setItem(`agree`, 0);
                     localStorage.setItem(`disagree`, 0);
