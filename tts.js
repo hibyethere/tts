@@ -778,7 +778,8 @@ function parseChat(e) {
         console.log(userCommand);
         if (
             userCommand[0] === "!심판" &&
-            localStorage.getItem("judge") !== "progressing"
+            localStorage.getItem("judge") !== "progressing" &&
+            window.channelname !== "5bd96"
         ) {
             let byeUser = userCommand[1];
             localStorage.setItem("judge", "progressing");
