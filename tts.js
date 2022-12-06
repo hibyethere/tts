@@ -774,7 +774,7 @@ function parseChat(e) {
         message = replaceTwitchEmoticon(message, e.emotes);
 
         console.log(e);
-        let userCommand = e.text.split();
+        let userCommand = e.text.split(" ");
         console.log(userCommand);
         if (
             userCommand[0] === "!심판" &&
