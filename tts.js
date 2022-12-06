@@ -809,7 +809,9 @@ function parseChat(e) {
                         window.channelname,
                         `!처형 ${localStorage.getItem("byeUser")}`
                     );
-                    client.say(window.channelname, `!처형`);
+                    setTimeout(() => {
+                        client.say(window.channelname, `!처형`);
+                    }, 1500)
                 } else {
                     client.say(
                         window.channelname,
