@@ -1257,9 +1257,9 @@ let check_queue = [];
 function parseQueue() {
     var queue = window.speechQueue;
 
-    console.log(queue);
-    console.log(window.kathy.IsSpeaking());
-    console.log(window.speechSynthesis.speaking);
+    // console.log(queue);
+    // console.log(window.kathy.IsSpeaking());
+    // console.log(window.speechSynthesis.speaking);
 
     if (check_queue.length > 500) {
         window.kathy.ShutUp();
@@ -1270,7 +1270,7 @@ function parseQueue() {
 
     if (window.speechSynthesis.speaking || window.kathy.IsSpeaking()) {
         check_queue.push(1);
-        console.log(check_queue);
+        // console.log(check_queue);
         setTimeout(parseQueue, 100);
         return;
     }
