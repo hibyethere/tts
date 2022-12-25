@@ -1249,6 +1249,8 @@ function getParams(name, address = window.location.href) {
     }
 }
 
+let check_queue = [];
+
 /**
  * TTS 큐 파싱 함수
  */
@@ -1259,14 +1261,23 @@ function parseQueue() {
     console.log(window.kathy.IsSpeaking());
     console.log(window.speechSynthesis.speaking);
 
+    if (check_queue.length > 100) {
+        window.speechQueue = [];
+        window.kathy.ShutUp();
+        window.speechSynthesis.cancel();
+        console.log("clear");
+    }
+
     if (window.speechSynthesis.speaking || window.kathy.IsSpeaking()) {
-        setTimeout(parseQueue, 20000);
+        check_queue.push(1);
+        console.log(check_queue);
+        setTimeout(parseQueue, 100);
         return;
     }
 
     var obj = queue.shift();
     if (typeof obj === "undefined") {
-        setTimeout(parseQueue, 20000);
+        setTimeout(parseQueue, 100);
         return;
     }
 
