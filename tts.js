@@ -1265,6 +1265,7 @@ function parseQueue() {
         window.speechQueue = [];
         window.kathy.ShutUp();
         window.speechSynthesis.cancel();
+        check_queue = [];
         console.log("clear");
     }
 
