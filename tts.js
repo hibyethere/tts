@@ -1249,7 +1249,7 @@ function getParams(name, address = window.location.href) {
     }
 }
 
-let check_queue = [];
+// let check_queue = [];
 
 /**
  * TTS 큐 파싱 함수
@@ -1261,15 +1261,15 @@ function parseQueue() {
     // console.log(window.kathy.IsSpeaking());
     // console.log(window.speechSynthesis.speaking);
 
-    if (check_queue.length > 500) {
-        window.kathy.ShutUp();
-        window.speechSynthesis.cancel();
-        check_queue = [];
-        console.log("clear");
-    }
+    // if (check_queue.length > 500) {
+    //     window.kathy.ShutUp();
+    //     window.speechSynthesis.cancel();
+    //     check_queue = [];
+    //     console.log("clear");
+    // }
 
     if (window.speechSynthesis.speaking || window.kathy.IsSpeaking()) {
-        check_queue.push(1);
+        // check_queue.push(1);
         // console.log(check_queue);
         setTimeout(parseQueue, 100);
         return;
@@ -1291,7 +1291,7 @@ function parseQueue() {
     } else {
         console.warn("ERROR - Type " + obj.type + " is not supported.");
     }
-    check_queue = [];
+    // check_queue = [];
 
     setTimeout(parseQueue, 100);
 }
