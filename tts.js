@@ -1256,6 +1256,8 @@ function parseQueue() {
     var queue = window.speechQueue;
 
     console.log(queue);
+    console.log(window.kathy.IsSpeaking());
+    console.log(window.speechSynthesis.speaking);
 
     if (window.speechSynthesis.speaking || window.kathy.IsSpeaking()) {
         setTimeout(parseQueue, 20000);
