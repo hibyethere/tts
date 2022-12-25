@@ -1261,7 +1261,7 @@ function parseQueue() {
     console.log(window.kathy.IsSpeaking());
     console.log(window.speechSynthesis.speaking);
 
-    if (check_queue.length > 100) {
+    if (check_queue.length > 500) {
         window.speechQueue = [];
         window.kathy.ShutUp();
         window.speechSynthesis.cancel();
@@ -1292,6 +1292,7 @@ function parseQueue() {
     } else {
         console.warn("ERROR - Type " + obj.type + " is not supported.");
     }
+    check_queue = [];
 
     setTimeout(parseQueue, 100);
 }
