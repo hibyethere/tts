@@ -1262,7 +1262,6 @@ function parseQueue() {
     console.log(window.speechSynthesis.speaking);
 
     if (check_queue.length > 500) {
-        window.speechQueue = [];
         window.kathy.ShutUp();
         window.speechSynthesis.cancel();
         check_queue = [];
