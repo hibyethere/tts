@@ -789,7 +789,9 @@ function parseChat(e) {
 
             client.say(
                 window.channelname,
-                `@${localStorage.getItem("byeUser")} 처형 심판을 시작합니다. 10초 동안 !찬성 혹은 !반대를 선택해주세요`
+                `@${localStorage.getItem(
+                    "byeUser"
+                )} 처형 심판을 시작합니다. 10초 동안 !찬성 혹은 !반대를 선택해주세요`
             );
 
             setTimeout(() => {
@@ -811,7 +813,7 @@ function parseChat(e) {
                     );
                     setTimeout(() => {
                         client.say(window.channelname, `!처형`);
-                    }, 1500)
+                    }, 1500);
                 } else {
                     client.say(
                         window.channelname,
@@ -823,8 +825,8 @@ function parseChat(e) {
                 localStorage.setItem(`disagree`, 0);
 
                 for (let i = 0; i < localStorage.length; i++) {
-                    if (localStorage.key(i).split(':')[0] === 'vote') {
-                        localStorage.setItem(localStorage.key(i), 'off');
+                    if (localStorage.key(i).split(":")[0] === "vote") {
+                        localStorage.setItem(localStorage.key(i), "off");
                     }
                 }
             }, 10000);
@@ -1253,14 +1255,16 @@ function getParams(name, address = window.location.href) {
 function parseQueue() {
     var queue = window.speechQueue;
 
+    console.log(queue);
+
     if (window.speechSynthesis.speaking || window.kathy.IsSpeaking()) {
-        setTimeout(parseQueue, 100);
+        setTimeout(parseQueue, 20000);
         return;
     }
 
     var obj = queue.shift();
     if (typeof obj === "undefined") {
-        setTimeout(parseQueue, 100);
+        setTimeout(parseQueue, 20000);
         return;
     }
 
