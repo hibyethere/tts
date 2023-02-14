@@ -1023,6 +1023,12 @@ function playText(
                 if (detectedLanguage == "kor") {
                     if (
                         voice.lang === "ko-KR" &&
+                        voice.name.indexOf("Jinho") !== -1
+                    ) {
+                        voiceLang = "ko-KR";
+                        voiceIdx = i;
+                    } else if (
+                        voice.lang === "ko-KR" &&
                         voice.name.indexOf("Google") !== -1
                     ) {
                         voiceLang = "ko-KR";
