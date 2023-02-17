@@ -1070,6 +1070,8 @@ function playText(
             if (voiceIdx !== -1) {
                 console.log(msg.voice, voiceIdx);
                 msg.voice = speechSynthesis.getVoices()[voiceIdx];
+                console.log(msg.voice, voiceIdx);
+
             }
 
             // 이외 나머지 값 설정
