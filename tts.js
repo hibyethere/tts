@@ -1067,8 +1067,10 @@ function playText(
 
             // 인식된 언어로 설정한다
             if (voiceLang != "en-US") msg.lang = voiceLang;
-            if (voiceIdx !== -1)
+            if (voiceIdx !== -1) {
+                console.log(msg.voice, voiceIdx, voice.name.indexOf("한국"));
                 msg.voice = speechSynthesis.getVoices()[voiceIdx];
+            }
 
             // 이외 나머지 값 설정
             msg.from = nickname;
