@@ -519,7 +519,7 @@ function checkTTS() {
         const msg = new SpeechSynthesisUtterance(
             window.channelname + " 채널에 연결되었습니다."
         );
-        msg.rate = 1.3;
+        msg.rate = 1.0;
         speechSynthesis.cancel();
 
         msg.onerror = function (event) {
@@ -1126,9 +1126,9 @@ function playText(
             obj.type = "polly";
             obj.msg =
                 '<speak><prosody rate="' +
-                parseInt(speed * 100) +
+                parseInt(1.0 * 100) +
                 '%" pitch="' +
-                parseInt(pitch * 100 - 100) +
+                parseInt(1.0 * 100 - 100) +
                 '%">' +
                 string +
                 "</prosody></speak>";
