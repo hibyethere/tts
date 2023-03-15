@@ -1071,13 +1071,14 @@ function playText(
                 console.log(msg.voice, voiceIdx);
                 msg.voice = speechSynthesis.getVoices()[voiceIdx];
                 console.log(msg.voice, voiceIdx);
-
             }
 
             // 이외 나머지 값 설정
             msg.from = nickname;
-            msg.rate = speed;
-            msg.pitch = pitch;
+            // msg.rate = speed;
+            // msg.pitch = pitch;
+            msg.rate = 1.0;
+            msg.pitch = 1.0;
 
             // 읽기 시작시 채팅 로그에 추가
             msg.onstart = function (event) {
