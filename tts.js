@@ -1069,6 +1069,7 @@ function playText(
             if (voiceLang != "en-US") msg.lang = voiceLang;
             if (voiceIdx !== -1) {
                 console.log(msg.voice, voiceIdx);
+                console.log(speechSynthesis.getVoices());
                 msg.voice = speechSynthesis.getVoices()[voiceIdx];
                 console.log(msg.voice, voiceIdx);
             }
