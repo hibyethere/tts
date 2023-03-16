@@ -1064,14 +1064,12 @@ function playText(
 
             // TTS를 위한 객체 초기화(언어, 목소리 등 정보 포함)
             const msg = new SpeechSynthesisUtterance(string);
+            console.log(detectedLanguage);
 
             // 인식된 언어로 설정한다
             if (voiceLang != "en-US") msg.lang = voiceLang;
             if (voiceIdx !== -1) {
-                console.log(msg.voice, voiceIdx);
-                console.log(speechSynthesis.getVoices());
                 msg.voice = speechSynthesis.getVoices()[voiceIdx];
-                console.log(msg.voice, voiceIdx);
             }
 
             // 이외 나머지 값 설정
