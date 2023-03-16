@@ -1053,7 +1053,7 @@ function playText(
                 } else {
                     if (
                         voice.lang === "en-US" &&
-                        voice.name.indexOf("Google") !== -1
+                        voice.name.indexOf("Matt") !== -1
                     ) {
                         voiceIdx = i;
                     }
